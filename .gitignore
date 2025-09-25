@@ -1,0 +1,15 @@
+# Arquivos de compilação do C++
+*.o
+*.exe
+*.dll
+
+# Pasta de build
+/bin/
+/obj/
+
+# Arquivos de configuração pessoal do Code::Blocks
+*.depend
+*.layout
+
+# Arquivos de log e outros
+*.log
