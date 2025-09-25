@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(1280, 720);
     glutCreateWindow("Jogo 3D");
+    glutSetCursor(GLUT_CURSOR_NONE); // Oculta o cursor do mouse
 
     // 2. Registro dos Callbacks
     glutDisplayFunc(renderCallback);
@@ -50,9 +51,11 @@ int main(int argc, char** argv) {
     // 3. Inicialização do nosso jogo (configurações do OpenGL)
     game.init();
 
-    // 4. Inicia o Loop Principal do GLUT
-    // Esta função nunca retorna até que a janela seja fechada.
-    glutMainLoop();
+    // --- ADICIONE ESTA LINHA ---
+    // Centraliza o ponteiro do mouse para o estado inicial
+    glutWarpPointer(1280 / 2, 720 / 2);
 
+    // 4. Inicia o Loop Principal do GLUT
+    glutMainLoop();
     return 0;
 }

@@ -3,23 +3,29 @@
 
 #include "FPSCamera.h"
 
+// Usado para rastrear o estado das teclas de movimento
+#include <map>
+
 class Player {
 public:
     Player();
 
-    // Métodos para a Pessoa 2 implementar
     void handleKeyDown(unsigned char key);
     void handleKeyUp(unsigned char key);
     void handleMouseMotion(int x, int y);
 
-    void update(float deltaTime); // Atualiza posição baseado no input e colisão
-    void render();                // Desenha o jogador (se necessário)
+    // Atualiza a posição do jogador com base no input
+    void update(float deltaTime);
 
-    FPSCamera& getCamera();       // Método para a classe Game acessar a câmera
+    FPSCamera& getCamera();
 
 private:
-    FPSCamera camera;
-    // Posição, velocidade, AABB para colisão, etc.
+    Vector3f _position;
+    FPSCamera _camera;
+    float _movementSpeed;
+
+    // Mapa para guardar o estado das teclas (true = pressionada, false = solta)
+    std::map<unsigned char, bool> _keyState;
 };
 
 #endif
