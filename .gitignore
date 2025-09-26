@@ -8,7 +8,6 @@
 /obj/
 
 # Arquivos de configuração pessoal do Code::Blocks
-*.depend
 *.layout
 
 # Arquivos de log e outros

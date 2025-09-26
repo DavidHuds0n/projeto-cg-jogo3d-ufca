@@ -1,6 +1,7 @@
 // main.cpp
 #include <GL/freeglut.h>
 #include "include/Game.h"
+#include "include/Config.h"
 
 // --- Instância Global do Jogo ---
 // Necessária para que as funções de callback do GLUT possam acessá-la.
@@ -37,8 +38,8 @@ int main(int argc, char** argv) {
     // 1. Inicialização do GLUT
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(1280, 720);
-    glutCreateWindow("Jogo 3D");
+    glutInitWindowSize(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT);
+    glutCreateWindow(Config::GAME_TITLE);
     glutSetCursor(GLUT_CURSOR_NONE); // Oculta o cursor do mouse
 
     // 2. Registro dos Callbacks
@@ -53,7 +54,7 @@ int main(int argc, char** argv) {
 
     // --- ADICIONE ESTA LINHA ---
     // Centraliza o ponteiro do mouse para o estado inicial
-    glutWarpPointer(1280 / 2, 720 / 2);
+    glutWarpPointer(Config::SCREEN_WIDTH / 2, Config::SCREEN_HEIGHT / 2);
 
     // 4. Inicia o Loop Principal do GLUT
     glutMainLoop();

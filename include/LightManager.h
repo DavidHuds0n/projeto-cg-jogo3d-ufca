@@ -1,17 +1,18 @@
 #ifndef LIGHTMANAGER_H
 #define LIGHTMANAGER_H
 
+#include "Player.h" // Inclui para ter acesso à struct Vector3f
+
 class LightManager {
 public:
     LightManager();
 
-    // Métodos para a Pessoa 4 implementar
-    void init(); // Habilita GL_LIGHTING e configura luz ambiente global
+    void init();
 
-    // Atualiza a posição/direção da lanterna (spotlight)
-    void updateFlashlight(float posX, float posY, float posZ, float dirX, float dirY, float dirZ);
+    // ASSINATURA CORRIGIDA: Aceita structs em vez de 6 floats.
+    void updateFlashlight(const Vector3f& pos, const Vector3f& dir);
 
-    void enableTorch(int torchID); // Acende uma das tochas (point lights)
+    void enableTorch(int torchID);
 };
 
 #endif

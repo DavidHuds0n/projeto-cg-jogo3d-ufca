@@ -2,9 +2,9 @@
 #define PLAYER_H
 
 #include "FPSCamera.h"
-
-// Usado para rastrear o estado das teclas de movimento
 #include <map>
+
+// Não precisamos mais da forward declaration 'class Level;'
 
 class Player {
 public:
@@ -14,17 +14,18 @@ public:
     void handleKeyUp(unsigned char key);
     void handleMouseMotion(int x, int y);
 
-    // Atualiza a posição do jogador com base no input
+    // Voltamos para a assinatura simples do update, sem o Level
     void update(float deltaTime);
 
+    void setPosition(const Vector3f& pos);
     FPSCamera& getCamera();
 
 private:
     Vector3f _position;
     FPSCamera _camera;
     float _movementSpeed;
+    float _collisionRadius;
 
-    // Mapa para guardar o estado das teclas (true = pressionada, false = solta)
     std::map<unsigned char, bool> _keyState;
 };
 

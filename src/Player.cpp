@@ -1,9 +1,11 @@
 #include "../include/Player.h"
 #include <cmath>
+#include "../include/Config.h"
 
 Player::Player() {
-    _position = {0.0f, 1.0f, 5.0f}; // Posição inicial do jogador
-    _movementSpeed = 5.0f; // Unidades por segundo
+    _position = {0.0f, 1.0f, 5.0f};
+    _movementSpeed = Config::PLAYER_SPEED;
+    _collisionRadius = Config::PLAYER_COLLISION_RADIUS;
 
     // Inicializa o estado de todas as teclas como 'false' (não pressionadas)
     _keyState['w'] = false;

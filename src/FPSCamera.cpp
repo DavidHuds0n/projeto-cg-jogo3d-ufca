@@ -1,6 +1,7 @@
 #include "../include/FPSCamera.h"
 #include <GL/freeglut.h>
 #include <cmath> // Para sin, cos
+#include "../include/Config.h"
 
 // Constantes para conversão de graus para radianos
 const float PI = 3.1415926535f;
@@ -11,12 +12,7 @@ FPSCamera::FPSCamera() {
     _worldUp = {0.0f, 1.0f, 0.0f};
     _yaw = -90.0f;
     _pitch = 0.0f;
-    _mouseSensitivity = 0.1f;
-    // As linhas abaixo não são mais necessárias
-    // _firstMouse = true;
-    // _lastMouseX = 1280 / 2;
-    // _lastMouseY = 720 / 2;
-
+    _mouseSensitivity = Config::CAMERA_SENSITIVITY;
     updateCameraVectors();
 }
 
@@ -45,8 +41,8 @@ void FPSCamera::updateView() {
 
 void FPSCamera::processMouseMotion(int x, int y) {
     // Calcula o deslocamento do mouse a partir do centro da tela
-    float xoffset = (float)(x - 1280 / 2);
-    float yoffset = (float)(720 / 2 - y); // Invertido, pois Y é de cima para baixo
+    float xoffset = (float)(x - Config::SCREEN_WIDTH / 2);
+    float yoffset = (float)(Config::SCREEN_HEIGHT / 2 - y);
 
     // Aplica a sensibilidade
     xoffset *= _mouseSensitivity;
