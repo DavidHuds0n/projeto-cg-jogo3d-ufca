@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1758897745 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\fpscamera.cpp
+1758921834 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\fpscamera.cpp
 	"../include/FPSCamera.h"
 	<GL/freeglut.h>
 	<cmath>
 	"../include/Config.h"
 
-1758896052 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\fpscamera.h
+1758920890 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\fpscamera.h
 
 1426360528 c:\mingw\include\gl\freeglut.h
 	"freeglut_std.h"
@@ -343,46 +343,60 @@
 1426360528 c:\mingw\include\gl\freeglut_ext.h
 	<stdarg.h>
 
-1758896052 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\interactable.cpp
+1758916227 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\interactable.cpp
 
 1758896052 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\level.cpp
 	"../include/Level.h"
 	<GL/freeglut.h>
 
-1758896052 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\level.h
+1758921188 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\level.h
 
-1758899562 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\lightmanager.cpp
+1758922653 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\lightmanager.cpp
 	"../include/LightManager.h"
 	"../include/Config.h"
 	<GL/freeglut.h>
 
-1758899547 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\lightmanager.h
+1758921396 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\lightmanager.h
 	"Player.h"
 
-1758897859 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\player.cpp
+1758922284 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\player.cpp
 	"../include/Player.h"
 	<cmath>
 	"../include/Config.h"
 
-1758898207 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\player.h
+1758921030 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\player.h
 	"FPSCamera.h"
 	<map>
 
-1758896891 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\main.cpp
+1758921636 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\main.cpp
 	<GL/freeglut.h>
 	"include/Game.h"
 	"include/Config.h"
 
-1758896052 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\game.h
+1758921488 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\game.h
 	"Player.h"
 	"Level.h"
 	"LightManager.h"
+	"Creature.h"
 
-1758900964 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\config.h
+1758920809 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\config.h
 
-1758900915 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\game.cpp
+1758923226 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\game.cpp
 	"../include/Game.h"
 	"../include/Config.h"
 	<GL/freeglut.h>
 	<string>
+
+1758921229 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\creature.h
+	"Player.h"
+	<vector>
+
+1758923004 source:c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\src\creature.cpp
+	"../include/Creature.h"
+	"../include/Level.h"
+	"../include/Config.h"
+	<GL/freeglut.h>
+	<cmath>
+	<vector>
+	<queue>
 

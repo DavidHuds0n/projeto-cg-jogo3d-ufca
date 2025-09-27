@@ -1,16 +1,27 @@
+/**
+ * @file Interactable.h
+ * @brief Define os tipos e a estrutura de objetos interativos no jogo.
+ */
 #ifndef INTERACTABLE_H
 #define INTERACTABLE_H
 
-// Enum para identificar o tipo de objeto
+/**
+ * @enum InteractableType
+ * @brief Enumeração para identificar os diferentes tipos de objetos interativos.
+ */
 enum InteractableType {
-    TORCH,
-    BATTERY
+    TORCH,   ///< Objeto do tipo Tocha.
+    BATTERY  ///< Objeto do tipo Bateria para a lanterna.
 };
 
+/**
+ * @struct Interactable
+ * @brief Estrutura que representa um objeto interativo no mundo do jogo.
+ */
 struct Interactable {
-    InteractableType type;
-    float posX, posY, posZ;
-    bool isActive; // Ex: para saber se a tocha já foi acesa
+    InteractableType type; ///< O tipo do objeto (Tocha, Bateria, etc.).
+    float posX, posY, posZ;///< Coordenadas de posição do objeto no mundo.
+    bool isActive;         ///< Estado do objeto. Ex: true se a tocha já foi acesa/coletada.
 };
 
-#endif
+#endif // INTERACTABLE_H

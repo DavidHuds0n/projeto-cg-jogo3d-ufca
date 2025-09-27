@@ -1,37 +1,76 @@
+/**
+ * @file Config.h
+ * @brief Centraliza todas as constantes e parâmetros de configuração do Jogo 3D.
+ *
+ * @note Este arquivo atua como um "painel de controle" para o jogo, permitindo
+ * ajustes rápidos de jogabilidade e aparência sem a necessidade de alterar
+ * a lógica nos arquivos .cpp.
+ */
 #ifndef CONFIG_H
 #define CONFIG_H
 
 namespace Config {
     // --- Janela e Display ---
+    /** @brief Largura da tela em pixels. */
     static const int SCREEN_WIDTH = 1280;
+    /** @brief Altura da tela em pixels. */
     static const int SCREEN_HEIGHT = 720;
+    /** @brief Título que aparecerá na janela do jogo. */
     static const char* GAME_TITLE = "Jogo 3D";
 
     // --- Cores e Ambiente ---
-    static const float SKYBOX_R = 0.0f; // Vamos deixar o fundo preto para a iluminação se destacar
+    /** @brief Componente Vermelho (R) da cor de fundo (skybox). */
+    static const float SKYBOX_R = 0.0f;
+    /** @brief Componente Verde (G) da cor de fundo (skybox). */
     static const float SKYBOX_G = 0.0f;
+    /** @brief Componente Azul (B) da cor de fundo (skybox). */
     static const float SKYBOX_B = 0.0f;
 
     // --- Jogador ---
+    /** @brief Velocidade de movimento do jogador em unidades por segundo. */
     static const float PLAYER_SPEED = 5.0f;
-    static const float PLAYER_COLLISION_RADIUS = 0.3f; // Deixamos aqui para o futuro
+    /** @brief Vida máxima que o jogador pode ter. */
+    static const float PLAYER_MAX_HEALTH = 100.0f;
+    /** @brief Raio da esfera de colisão do jogador. */
+    static const float PLAYER_COLLISION_RADIUS = 0.3f;
 
     // --- Câmera ---
+    /** @brief Sensibilidade do mouse para a rotação da câmera. */
     static const float CAMERA_SENSITIVITY = 0.05f;
-    static const float CAMERA_ZNEAR = 0.01f; // << ADICIONE AQUI
-    static const float CAMERA_ZFAR = 100.0f; // << ADICIONE AQUI
+    /** @brief Distância mínima de renderização da câmera (plano de corte próximo). */
+    static const float CAMERA_ZNEAR = 0.01f;
+    /** @brief Distância máxima de renderização da câmera (plano de corte distante). */
+    static const float CAMERA_ZFAR = 100.0f;
+
+    // --- Criatura ("O Bicho") ---
+    /** @brief Velocidade de movimento da criatura. */
+    static const float CREATURE_SPEED = 4.0f;
+    /** @brief Distância na qual a criatura detecta o jogador. */
+    static const float CREATURE_DETECTION_RADIUS = 15.0f;
+    /** @brief Raio da esfera de colisão da criatura. */
+    static const float CREATURE_COLLISION_RADIUS = 0.8f;
+    /** @brief Dano que a criatura causa ao jogador por segundo. */
+    static const float CREATURE_DAMAGE_PER_SECOND = 25.0f;
 
     // --- Iluminação ---
+    /** @brief Intensidade da luz ambiente global. */
     static const float AMBIENT_LIGHT_INTENSITY = 0.1f;
+    /** @brief Ângulo de abertura do cone de luz da lanterna. */
     static const float FLASHLIGHT_CUTOFF = 25.0f;
+    /** @brief Expoente que define a suavidade da borda do cone de luz. */
     static const float FLASHLIGHT_EXPONENT = 40.0f;
+    /** @brief Fator de atenuação constante da luz da lanterna. */
     static const float FLASHLIGHT_ATT_CONSTANT = 1.0f;
+    /** @brief Fator de atenuação linear da luz da lanterna. */
     static const float FLASHLIGHT_ATT_LINEAR = 0.05f;
+    /** @brief Fator de atenuação quadrática da luz da lanterna. */
     static const float FLASHLIGHT_ATT_QUADRATIC = 0.01f;
 
     // --- Geometria do Mundo ---
-    static const float TILE_SIZE = 1.0f;
-    static const float WALL_HEIGHT = 1.5f;
+    /** @brief Tamanho (largura e profundidade) de cada bloco do labirinto. */
+    static const float TILE_SIZE = 2.0f;
+    /** @brief Altura das paredes do labirinto. */
+    static const float WALL_HEIGHT = 3.0f;
 }
 
 #endif // CONFIG_H
