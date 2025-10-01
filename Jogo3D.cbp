@@ -43,22 +43,35 @@
 			<Add directory="C:/MinGW/lib" />
 		</Linker>
 		<Unit filename="include/Config.h" />
-		<Unit filename="include/Creature.h" />
 		<Unit filename="include/FPSCamera.h" />
+		<Unit filename="include/Floor.h" />
 		<Unit filename="include/Game.h" />
+		<Unit filename="include/GameObject.h" />
 		<Unit filename="include/Interactable.h" />
-		<Unit filename="include/Level.h" />
+		<Unit filename="include/InteractableObject.h" />
 		<Unit filename="include/LightManager.h" />
 		<Unit filename="include/Player.h" />
+		<Unit filename="include/PrimitiveObject.h" />
+		<Unit filename="include/Ray.h" />
+		<Unit filename="include/Room.h" />
+		<Unit filename="include/SceneManager.h" />
+		<Unit filename="include/TestButton.h" />
+		<Unit filename="include/Vector.h" />
+		<Unit filename="include/Wall.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="res/levels/maze.txt" />
-		<Unit filename="src/Creature.cpp" />
 		<Unit filename="src/FPSCamera.cpp" />
+		<Unit filename="src/Floor.cpp" />
 		<Unit filename="src/Game.cpp" />
 		<Unit filename="src/Interactable.cpp" />
-		<Unit filename="src/Level.cpp" />
 		<Unit filename="src/LightManager.cpp" />
 		<Unit filename="src/Player.cpp" />
+		<Unit filename="src/PrimitiveObject.cpp" />
+		<Unit filename="src/Room.cpp" />
+		<Unit filename="src/SceneManager.cpp" />
+		<Unit filename="src/TestButton.cpp" />
+		<Unit filename="src/Vector.cpp" />
+		<Unit filename="src/Wall.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

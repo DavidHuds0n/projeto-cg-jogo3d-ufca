@@ -43,7 +43,7 @@ public:
     void render();
 
     std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
-
+    void switchToRoom(int roomIndex); // <-- ADICIONE ESTE MÉTODO
 
 private:
     // Vetor que armazena ponteiros para todas as salas do jogo.

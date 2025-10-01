@@ -98,6 +98,11 @@ void Player::update(float deltaTime) {
     _camera.setPosition(_position);
 }
 
+void Player::setPosition(const Vector3f& pos) {
+    _position = pos;
+    _camera.setPosition(_position); // Sincroniza a câmera com a nova posição
+}
+
 FPSCamera& Player::getCamera() {
     return _camera;
 }
