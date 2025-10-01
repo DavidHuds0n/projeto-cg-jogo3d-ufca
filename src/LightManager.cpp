@@ -67,6 +67,5 @@ void LightManager::updateFlashlight(const Vector3f& pos, const Vector3f& dir) {
 }
 
 void LightManager::enableTorch(int torchID) {
-    // TODO: Implementar a lógica para ativar outras fontes de luz (GL_LIGHT1, GL_LIGHT2, etc.)
-    // que representarão as tochas no cenário.
+
 }

@@ -4,117 +4,104 @@
  */
 #include "../include/Game.h"
 #include "../include/Config.h"
+#include "../include/Ray.h" // Inclui a struct Ray para o Ray Casting
+#include "../include/InteractableObject.h"
 #include <GL/freeglut.h>
-#include <string>
+#include <iostream>        // Para std::cout (usado nos testes de interação)
+#include <cmath>           // Para sqrt (usado na matemática de vetores)
+#include <limits>          // Para std::numeric_limits (usado para encontrar o objeto mais próximo)
 
-// --- Funções de Teste e Auxiliares ---
+// --- FUNÇÕES AUXILIARES DE RAY CASTING ---
 
 /**
- * @brief Desenha um cenário de teste com vários objetos e um grid.
- * @note ESTA FUNÇÃO É TEMPORÁRIA. Deve ser removida quando a renderização
- * do Level estiver funcional.
+ * @brief Calcula um raio 3D a partir das coordenadas 2D da tela.
+ * Usa gluUnProject para converter as coordenadas da tela para coordenadas do mundo.
+ * @param mouseX Coordenada X do mouse na janela.
+ * @param mouseY Coordenada Y do mouse na janela.
+ * @param player O objeto jogador, para obter a posição e matrizes da câmera.
+ * @return Um objeto Ray com origem na câmera e direção apontando para o cursor.
  */
-// --- A FUNÇÃO DO MUNDO DE TESTE (será removida quando o Level for implementado) ---
-void drawTestbed() {
-    // Desenha um Grid no Chão
-    glDisable(GL_LIGHTING);
-    glColor3f(0.3f, 0.3f, 0.3f);
-    glBegin(GL_LINES);
-    for (int i = -20; i <= 20; i++) {
-        glVertex3f((float)i, 0, -20);
-        glVertex3f((float)i, 0, 20);
-        glVertex3f(-20, 0, (float)i);
-        glVertex3f(20, 0, (float)i);
+Ray calculateMouseRay(int mouseX, int mouseY, Player& player) {
+    // 1. Obter matrizes e viewport atuais do OpenGL
+    GLdouble modelviewMatrix[16];
+    GLdouble projectionMatrix[16];
+    GLint viewport[4];
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelviewMatrix);
+    glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    // A coordenada Y do mouse (que cresce para baixo) precisa ser invertida para o OpenGL (que cresce para cima).
+    mouseY = viewport[3] - mouseY;
+
+    // 2. "Desprojetar" o ponto 2D duas vezes para obter 2 pontos no espaço 3D
+    GLdouble nearX, nearY, nearZ; // Ponto no plano de corte próximo (near plane)
+    GLdouble farX, farY, farZ;   // Ponto no plano de corte distante (far plane)
+
+    // Ponto próximo (Z=0.0 na coordenada de tela)
+    gluUnProject(mouseX, mouseY, 0.0, modelviewMatrix, projectionMatrix, viewport, &nearX, &nearY, &nearZ);
+    // Ponto distante (Z=1.0 na coordenada de tela)
+    gluUnProject(mouseX, mouseY, 1.0, modelviewMatrix, projectionMatrix, viewport, &farX, &farY, &farZ);
+
+    // 3. Calcular a direção do raio subtraindo o ponto distante do próximo
+    Vector3f rayDirection = {
+        (float)(farX - nearX),
+        (float)(farY - nearY),
+        (float)(farZ - nearZ)
+    };
+
+    // Normalizar o vetor de direção para que seu comprimento seja 1
+    float length = sqrt(rayDirection.x * rayDirection.x + rayDirection.y * rayDirection.y + rayDirection.z * rayDirection.z);
+    if (length > 0) {
+        rayDirection.x /= length;
+        rayDirection.y /= length;
+        rayDirection.z /= length;
     }
-    glEnd();
-    glEnable(GL_LIGHTING);
 
-    // --- Desenha Objetos de Referência COM MATERIAL ---
-    GLfloat white_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_SPECULAR, white_specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, 32.0f);
-
-    // Cubo Vermelho
-    GLfloat red_diffuse[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, red_diffuse);
-    glPushMatrix();
-    glTranslatef(0, 1, -10);
-    glutSolidCube(1.0);
-    glPopMatrix();
-
-    // Cubo Verde
-    GLfloat green_diffuse[] = { 0.0f, 1.0f, 0.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, green_diffuse);
-    glPushMatrix();
-    glTranslatef(10, 1, 0);
-    glutSolidCube(1.0);
-    glPopMatrix();
-
-    // Cubo Azul
-    GLfloat blue_diffuse[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blue_diffuse);
-    glPushMatrix();
-    glTranslatef(-10, 1, 0);
-    glutSolidCube(1.0);
-    glPopMatrix();
-
-    // Esfera Amarela
-    GLfloat yellow_diffuse[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, yellow_diffuse);
-    glPushMatrix();
-    glTranslatef(-5, 1, 5);
-    glutSolidSphere(1.0, 32, 32);
-    glPopMatrix();
-
-    // Cone Roxo
-    GLfloat purple_diffuse[] = { 0.5f, 0.0f, 1.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, purple_diffuse);
-    glPushMatrix();
-    glTranslatef(5, 0, 5);
-    glRotatef(-90, 1, 0, 0);
-    glutSolidCone(1.0, 2.0, 32, 32);
-    glPopMatrix();
-
-    // Torus Ciano
-    GLfloat cyan_diffuse[] = { 0.0f, 1.0f, 1.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyan_diffuse);
-    glPushMatrix();
-    glTranslatef(0, 1, 10);
-    glutSolidTorus(0.5, 1.0, 32, 32);
-    glPopMatrix();
+    // A origem do raio é a posição da câmera
+    return {player.getCamera().getPosition(), rayDirection};
 }
 
 /**
- * @brief Desenha a Interface do Usuário (HUD).
- * @param health A vida atual do jogador a ser exibida.
- * @note Esta função é um placeholder para a implementação da Pessoa 4.
+ * @brief Verifica se um raio intercepta uma esfera usando a fórmula matemática de interseção.
+ * @param ray O raio a ser testado.
+ * @param sphereCenter O centro da esfera de colisão.
+ * @param sphereRadius O raio da esfera de colisão.
+ * @return A distância da origem do raio até a interseção, ou um valor negativo se não houver interseção.
  */
-void drawHUD(float health) {
-    /*
-     * TAREFA (Pessoa 4): Implementar a HUD.
-     * 1. Mudar para o modo de projeção 2D (glOrtho2D).
-     * 2. Desabilitar iluminação e profundidade (glDisable LIGHTING/DEPTH_TEST).
-     * 3. Definir a cor do texto.
-     * 4. Usar glRasterPos e glutBitmapCharacter para desenhar as strings na tela.
-     * - Exibir a vida do jogador.
-     * - Exibir "GAME OVER" ou "YOU WIN" se o estado do jogo mudar.
-     * 5. Restaurar os modos de projeção e estados do OpenGL.
-     */
+float rayIntersectsSphere(const Ray& ray, const Vector3f& sphereCenter, float sphereRadius) {
+    Vector3f oc = {
+        ray.origin.x - sphereCenter.x,
+        ray.origin.y - sphereCenter.y,
+        ray.origin.z - sphereCenter.z
+    };
+    float a = ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y + ray.direction.z * ray.direction.z; // Deve ser 1.0 se a direção for normalizada
+    float b = 2.0f * (oc.x * ray.direction.x + oc.y * ray.direction.y + oc.z * ray.direction.z);
+    float c = (oc.x * oc.x + oc.y * oc.y + oc.z * oc.z) - sphereRadius * sphereRadius;
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0) {
+        return -1.0f; // Nenhuma interseção real
+    } else {
+        // Retorna a distância da interseção mais próxima (a menor raiz positiva da equação quadrática)
+        return (-b - sqrt(discriminant)) / (2.0f * a);
+    }
 }
 
-// --- Implementação da Classe Game ---
+
+// --- IMPLEMENTAÇÃO DA CLASSE GAME ---
 
 Game::Game() {
-    // O construtor é mantido simples. A inicialização pesada ocorre no init().
+    // Estado inicial do jogo.
+    _currentState = PLAYING;
 }
 
 void Game::init() {
     // 1. Configurações iniciais de estado do OpenGL.
-    glClearColor(Config::SKYBOX_R, Config::SKYBOX_G, Config::SKYBOX_B, 1.0f); // Cor de fundo.
-    glEnable(GL_DEPTH_TEST);       // Habilita teste de profundidade para renderização 3D correta.
-    glShadeModel(GL_SMOOTH);       // Habilita sombreamento suave.
-    glEnable(GL_NORMALIZE);        // Normaliza vetores normais (importante para iluminação).
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE); // Melhora o cálculo do brilho especular.
+    glClearColor(Config::SKYBOX_R, Config::SKYBOX_G, Config::SKYBOX_B, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
     // 2. Configura a projeção da câmera (perspectiva).
     glMatrixMode(GL_PROJECTION);
@@ -126,108 +113,108 @@ void Game::init() {
     glLoadIdentity();
 
     // 4. Inicializa os sistemas do jogo.
-    lightManager.init();
-    // TAREFA (Pessoa 2): A inicialização do Level viria aqui.
-
-    // 5. Inicia o jogo.
-    resetGame();
+    _lightManager.init();
+    _sceneManager.init(); // Inicializa o novo gerenciador de cenas
 }
 
 void Game::update(float deltaTime) {
-    // A lógica principal do jogo é controlada pelo estado atual.
-    switch (currentState) {
-        case PLAYING:
-            // O jogo está ativo, então atualizamos todos os objetos dinâmicos.
-            player.update(deltaTime);
-            // TAREFA (Pessoa 3): Chamar creature.update(...) aqui.
-            // TAREFA (Pessoa 4): Chamar checkCollisions() aqui.
-            break;
-
-        case GAME_OVER:
-        case WIN:
-            // O jogo terminou. A lógica de atualização de Player e Creature é pausada.
-            // O jogo apenas espera pela entrada do jogador para reiniciar (tecla 'R').
-            // TAREFA (Pessoa 4): A verificação da tecla 'R' está em processKeyDown.
-            break;
+    // A lógica de atualização agora é delegada.
+    // O SceneManager, por sua vez, atualizará a sala atual.
+    if (_currentState == PLAYING) {
+        _player.update(deltaTime);
+        _sceneManager.update(deltaTime);
     }
+
     // Força a tela a ser redesenhada no próximo ciclo.
     glutPostRedisplay();
 }
 
 void Game::render() {
-    // 1. Limpa os buffers de cor e profundidade antes de desenhar o novo frame.
+    // 1. Limpa os buffers de cor e profundidade.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity(); // Reseta a matriz de ModelView.
+    glLoadIdentity();
 
     // 2. Configura a câmera e a iluminação para a cena.
-    player.getCamera().updateView();
-    lightManager.updateFlashlight(player.getCamera().getPosition(), player.getCamera().getFrontVector());
+    // A câmera precisa ser atualizada ANTES de pegarmos as matrizes para o Ray Casting.
+    _player.getCamera().updateView();
+    _lightManager.updateFlashlight(_player.getCamera().getPosition(), _player.getCamera().getFrontVector());
 
-    // 3. Renderiza os objetos do mundo.
-    // TAREFA (Integração): Substituir drawTestbed() pelas chamadas reais.
-    drawTestbed();
-    // level.render();
-    // creature.render();
+    // 3. Renderiza a cena atual através do SceneManager.
+    _sceneManager.render();
 
-    // 4. Renderiza a interface do usuário (HUD) por cima de tudo.
-    // TAREFA (Pessoa 4): Chamar a função drawHUD aqui.
-    // drawHUD(player.getHealth());
-
-    // 5. Troca os buffers para exibir o frame que acabamos de desenhar.
+    // 4. Troca os buffers para exibir o frame.
     glutSwapBuffers();
 }
 
-void Game::resetGame() {
-    /*
-     * TAREFA (Integração): Esta função deve restaurar tudo para o estado inicial.
-     * 1. (Pessoa 4) Definir o estado do jogo para PLAYING.
-     * 2. (Pessoa 2) Carregar o labirinto do arquivo.
-     * 3. (Pessoa 4) Resetar o jogador (vida, posição inicial do mapa).
-     * 4. (Pessoa 3) Resetar a criatura (encontrar um ponto de spawn).
-     */
-    currentState = PLAYING;
+void Game::processInteraction() {
+    std::cout << "Tecla 'E' pressionada! Calculando Ray Casting..." << std::endl;
+
+    // 1. Calcula o raio a partir do centro da tela
+    Ray ray = calculateMouseRay(Config::SCREEN_WIDTH / 2, Config::SCREEN_HEIGHT / 2, _player);
+
+    // 2. Lógica para encontrar o objeto interativo mais próximo
+    InteractableObject* closestObject = nullptr;
+    float closestHitDistance = std::numeric_limits<float>::max();
+
+    // 3. Pede ao SceneManager a lista de objetos interativos da cena atual
+    std::vector<InteractableObject*>& interactables = _sceneManager.getInteractableObjects();
+
+    for (auto* obj : interactables) {
+        if (obj->isInteractable()) {
+            // Teste de colisão Ray-Sphere
+            float hitDistance = rayIntersectsSphere(ray, obj->getPosition(), obj->getCollisionRadius());
+
+            // Se o raio atingiu o objeto (dist > 0) e é o mais próximo até agora
+            if (hitDistance > 0 && hitDistance < closestHitDistance) {
+                closestHitDistance = hitDistance;
+                closestObject = obj;
+            }
+        }
+    }
+
+    // 4. Se um objeto foi encontrado, verifica a distância e interage
+    if (closestObject) {
+        // Verifica se a distância do jogador até o objeto é curta o suficiente
+        if (closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
+            closestObject->onClick();
+        } else {
+            std::cout << "Objeto encontrado, mas esta longe demais para interagir!" << std::endl;
+        }
+    } else {
+        std::cout << "Nenhum objeto interativo na mira." << std::endl;
+    }
 }
 
-void Game::checkCollisions() {
-    /*
-     * TAREFA (Pessoa 4): Implementar a detecção de colisões.
-     * 1. Colisão Jogador vs. Criatura:
-     * - Calcular a distância entre jogador e criatura.
-     * - Se a distância for menor que o raio de colisão, aplicar dano ao jogador.
-     * - Se a vida do jogador chegar a zero, mudar `currentState` para GAME_OVER.
-     *
-     * 2. (Integração com Pessoa 2) Condição de Vitória:
-     * - Calcular a distância entre o jogador e a posição de saída do labirinto.
-     * - Se for pequena o suficiente, mudar `currentState` para WIN.
-     */
-}
 
 // --- Processamento de Entrada ---
 
 void Game::processKeyDown(unsigned char key, int x, int y) {
+    key = tolower(key); // Converte a tecla para minúscula para facilitar a verificação
+
     if (key == 27) { // Tecla ESC
         glutLeaveMainLoop(); // Fecha o jogo.
     }
-    /*
-     * TAREFA (Pessoa 4): Implementar o reinício do jogo.
-     * - Verificar se o estado é GAME_OVER ou WIN.
-     * - Se for, e a tecla for 'r' ou 'R', chamar resetGame().
-     */
-    player.handleKeyDown(key);
+
+    if (key == 'e') {
+        processInteraction();
+    }
+
+    // Apenas repassa a entrada para o jogador para o movimento.
+    _player.handleKeyDown(key);
 }
 
 void Game::processKeyUp(unsigned char key, int x, int y) {
-    player.handleKeyUp(key);
+    key = tolower(key);
+    _player.handleKeyUp(key);
 }
 
 void Game::processMouseMotion(int x, int y) {
-    // Ignora o evento se o mouse estiver exatamente no centro (causado por nós mesmos).
+    // Ignora o evento se o mouse estiver exatamente no centro (evita loops).
     if (x == Config::SCREEN_WIDTH / 2 && y == Config::SCREEN_HEIGHT / 2) {
         return;
     }
-    player.handleMouseMotion(x, y);
+    _player.handleMouseMotion(x, y);
 
-    // Força o cursor a voltar para o centro da tela após cada movimento.
-    // Isso cria a ilusão de movimento infinito do mouse, essencial para jogos FPS.
+    // Força o cursor a voltar para o centro da tela.
     glutWarpPointer(Config::SCREEN_WIDTH / 2, Config::SCREEN_HEIGHT / 2);
 }

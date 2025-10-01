@@ -5,13 +5,7 @@
 #ifndef FPSCAMERA_H
 #define FPSCAMERA_H
 
-/**
- * @struct Vector3f
- * @brief Estrutura para representar um vetor ou ponto no espaço 3D com coordenadas x, y, z.
- */
-struct Vector3f {
-    float x, y, z;
-};
+#include "Vector.h"
 
 /**
  * @class FPSCamera

@@ -1,33 +1,22 @@
-/**
- * @file Game.h
- * @brief Define a classe principal Game, que orquestra todo o loop e a lógica do jogo.
- */
 #ifndef GAME_H
 #define GAME_H
 
 #include "Player.h"
-#include "Level.h"
 #include "LightManager.h"
-#include "Creature.h"
+#include "SceneManager.h" // Adicionado
 
 /**
- * @enum GameState
- * @brief Define os possíveis estados globais do jogo.
+ * @file Game.h
+ * @brief Define a classe principal Game, que orquestra todo o jogo.
  */
+
+// Enum para os estados principais do jogo.
 enum GameState {
-    PLAYING,    ///< O jogo está em andamento normal.
-    GAME_OVER,  ///< O jogador perdeu.
-    WIN         ///< O jogador venceu.
+    PLAYING,
+    GAME_OVER,
+    WIN
 };
 
-/**
- * @class Game
- * @brief A classe central que gerencia todos os subsistemas do jogo.
- *
- * Esta classe é responsável pelo loop principal (update/render), gerenciamento de estado
- * (PLAYING, GAME_OVER), e pela inicialização e comunicação entre todos os outros
- * objetos do jogo (Player, Level, Creature, etc).
- */
 class Game {
 public:
     /**
@@ -36,67 +25,34 @@ public:
     Game();
 
     /**
-     * @brief Inicializa todos os componentes do jogo (jogador, nível, luzes, etc).
+     * @brief Inicializa o jogo, configurando o OpenGL e todos os sistemas.
      */
     void init();
 
     /**
-     * @brief Renderiza um único quadro (frame) do jogo.
-     */
-    void render();
-
-    /**
-     * @brief Atualiza a lógica do jogo com base no tempo decorrido.
-     * @param [in] deltaTime O tempo (em segundos) desde o último quadro.
+     * @brief Atualiza a lógica do jogo a cada frame.
+     * @param deltaTime O tempo (em ms) desde o último frame.
      */
     void update(float deltaTime);
 
     /**
-     * @brief Processa o evento de uma tecla ser pressionada.
-     * @param [in] key A tecla pressionada.
-     * @param [in] x A coordenada X do mouse no momento do evento.
-     * @param [in] y A coordenada Y do mouse no momento do evento.
+     * @brief Renderiza a cena do jogo.
      */
+    void render();
+
+    // --- Processamento de Entrada ---
     void processKeyDown(unsigned char key, int x, int y);
-
-    /**
-     * @brief Processa o evento de uma tecla ser solta.
-     * @param [in] key A tecla solta.
-     * @param [in] x A coordenada X do mouse no momento do evento.
-     * @param [in] y A coordenada Y do mouse no momento do evento.
-     */
     void processKeyUp(unsigned char key, int x, int y);
-
-    /**
-     * @brief Processa o movimento do mouse.
-     * @param [in] x A nova coordenada X do mouse.
-     * @param [in] y A nova coordenada Y do mouse.
-     */
     void processMouseMotion(int x, int y);
 
 private:
-    // --- Funções de gerenciamento de estado (Tarefa da Pessoa 4) ---
+    void processInteraction();
 
-    /**
-     * @brief Reinicia o jogo para o seu estado inicial.
-     */
-    void resetGame();
-
-    /**
-     * @brief Verifica e processa colisões entre entidades (jogador, criatura, paredes).
-     */
-    void checkCollisions();
-
-    /**
-     * @brief Desenha a Interface do Usuário (HUD), como vida, munição, etc.
-     */
-    void drawHUD();
-
-    GameState currentState;   ///< O estado atual do jogo (PLAYING, GAME_OVER, etc).
-    Player player;            ///< Instância do jogador.
-    Level level;              ///< Instância do nível/labirinto.
-    LightManager lightManager;///< Instância do gerenciador de luz.
-    Creature creature;        ///< Instância da criatura inimiga.
+    // --- Membros do Jogo ---
+    Player       _player;
+    LightManager _lightManager;
+    SceneManager _sceneManager;   // Substitui o antigo 'Level'
+    GameState    _currentState;
 };
 
 #endif // GAME_H

@@ -18,6 +18,7 @@ Player::Player() {
     _keyState['a'] = false;
     _keyState['s'] = false;
     _keyState['d'] = false;
+    _keyState['e'] = false;
 
     // A câmera começa na mesma posição que o jogador.
     _camera.setPosition(_position);
@@ -42,48 +43,58 @@ void Player::handleMouseMotion(int x, int y) {
 
 void Player::update(float deltaTime) {
     // --- Lógica de Movimento ---
-
-    // Converte o deltaTime (geralmente em milissegundos) para segundos para consistência nos cálculos.
     float dtSeconds = deltaTime / 1000.0f;
-    // Calcula a distância que o jogador se moverá neste frame.
     float velocity = _movementSpeed * dtSeconds;
 
-    // Pega os vetores de direção da câmera. Eles nos dizem para onde é "frente" e "direita".
     Vector3f front = _camera.getFrontVector();
     Vector3f right = _camera.getRightVector();
 
-    // --- Prevenção de Voo ---
-    // Para o movimento de "andar", nós queremos ignorar a componente Y do vetor 'front'.
-    // Se não fizéssemos isso, o jogador se moveria para cima (voaria) ao olhar para cima.
+    // Prevenção de Voo (mantém o movimento no plano XZ)
     Vector3f moveFront = {front.x, 0.0f, front.z};
 
-    // Normalizamos o vetor de movimento 'moveFront' para manter a velocidade constante.
-    // Sem isso, o jogador andaria mais devagar ao olhar para cima ou para baixo.
-    float length = sqrt(moveFront.x * moveFront.x + moveFront.z * moveFront.z);
-    if (length > 0) {
-        moveFront = {moveFront.x / length, 0.0f, moveFront.z / length};
+    // Normaliza o vetor 'moveFront' para manter a velocidade constante ao olhar para cima/baixo.
+    float frontLength = sqrt(moveFront.x * moveFront.x + moveFront.z * moveFront.z);
+    if (frontLength > 0) {
+        moveFront.x /= frontLength;
+        moveFront.z /= frontLength;
     }
 
-    // Atualiza a posição do jogador com base em quais teclas estão pressionadas.
-    if (_keyState['w']) { // Mover para frente
-        _position.x += moveFront.x * velocity;
-        _position.z += moveFront.z * velocity;
+    // --- CORREÇÃO AQUI: Combina os inputs antes de mover ---
+
+    // 1. Cria um vetor de direção zerado.
+    Vector3f moveDirection = {0.0f, 0.0f, 0.0f};
+
+    // 2. Soma as direções com base nas teclas pressionadas.
+    if (_keyState['w']) {
+        moveDirection.x += moveFront.x;
+        moveDirection.z += moveFront.z;
     }
-    if (_keyState['s']) { // Mover para trás
-        _position.x -= moveFront.x * velocity;
-        _position.z -= moveFront.z * velocity;
+    if (_keyState['s']) {
+        moveDirection.x -= moveFront.x;
+        moveDirection.z -= moveFront.z;
     }
-    if (_keyState['a']) { // Mover para a esquerda (strafe)
-        _position.x -= right.x * velocity;
-        _position.z -= right.z * velocity;
+    if (_keyState['a']) {
+        moveDirection.x -= right.x;
+        moveDirection.z -= right.z;
     }
-    if (_keyState['d']) { // Mover para a direita (strafe)
-        _position.x += right.x * velocity;
-        _position.z += right.z * velocity;
+    if (_keyState['d']) {
+        moveDirection.x += right.x;
+        moveDirection.z += right.z;
+    }
+
+    // 3. Normaliza o vetor de direção final (se ele não for zero).
+    float dirLength = sqrt(moveDirection.x * moveDirection.x + moveDirection.z * moveDirection.z);
+    if (dirLength > 0) {
+        // Normaliza o vetor para que seu comprimento seja 1.
+        moveDirection.x /= dirLength;
+        moveDirection.z /= dirLength;
+
+        // 4. Aplica o movimento usando o vetor normalizado.
+        _position.x += moveDirection.x * velocity;
+        _position.z += moveDirection.z * velocity;
     }
 
     // Sincroniza a posição da câmera com a nova posição do jogador.
-    // Isso garante que a "visão" acompanhe o "corpo" do jogador.
     _camera.setPosition(_position);
 }
 
