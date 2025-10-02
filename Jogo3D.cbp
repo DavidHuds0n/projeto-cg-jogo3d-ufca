@@ -63,14 +63,12 @@
 		<Unit filename="src/FPSCamera.cpp" />
 		<Unit filename="src/Floor.cpp" />
 		<Unit filename="src/Game.cpp" />
-		<Unit filename="src/Interactable.cpp" />
 		<Unit filename="src/LightManager.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/PrimitiveObject.cpp" />
 		<Unit filename="src/Room.cpp" />
 		<Unit filename="src/SceneManager.cpp" />
 		<Unit filename="src/TestButton.cpp" />
-		<Unit filename="src/Vector.cpp" />
 		<Unit filename="src/Wall.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
