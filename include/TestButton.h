@@ -2,22 +2,23 @@
 #define TESTBUTTON_H
 
 #include "InteractableObject.h"
-#include "PrimitiveObject.h" // Usaremos para a parte visual
+#include "PrimitiveObject.h"
+#include "Vector.h" // Adicionado para BoundingBox
 
 class TestButton : public InteractableObject {
 public:
     TestButton(const Vector3f& position);
 
-    // Sobrescrevendo os métodos da classe base
-    virtual void update(float deltaTime) override;
+    virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
-    virtual void onClick() override;
+    virtual void onClick(GameStateManager& gameStateManager) override;
     virtual float getCollisionRadius() const override;
 
+    // --- ADICIONE ESTA LINHA ---
+    virtual BoundingBox getBoundingBox() const override;
+
 private:
-    // Um objeto primitivo para a representação visual do botão
     PrimitiveObject _visual;
-    // Raio para o teste de colisão (assumindo uma esfera)
     float _collisionRadius;
 };
 

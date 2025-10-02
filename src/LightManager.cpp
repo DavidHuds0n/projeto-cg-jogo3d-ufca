@@ -66,6 +66,9 @@ void LightManager::updateFlashlight(const Vector3f& pos, const Vector3f& dir) {
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
 }
 
-void LightManager::enableTorch(int torchID) {
-
+// Em LightManager.cpp, no final do arquivo
+void LightManager::setFlashlightColor(const Vector3f& color) {
+    GLfloat diffuse_color[] = { color.x, color.y, color.z, 1.0f };
+    // Atualiza a cor difusa da LIGHT0 (nossa lanterna)
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_color);
 }

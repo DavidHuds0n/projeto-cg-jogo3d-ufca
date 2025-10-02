@@ -1,13 +1,11 @@
-#ifndef KEY_H
-#define KEY_H
+#ifndef CONTROLPANEL_H
+#define CONTROLPANEL_H
 
 #include "InteractableObject.h"
-#include "PrimitiveObject.h"
-#include <string>
 
-class Key : public InteractableObject {
+class ControlPanel : public InteractableObject {
 public:
-    Key(const Vector3f& position, const std::string& puzzleIdRequired);
+    ControlPanel(const Vector3f& position);
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
@@ -16,13 +14,6 @@ public:
 
     // --- ADICIONE ESTA LINHA ---
     virtual BoundingBox getBoundingBox() const override;
-
-private:
-    PrimitiveObject _visual;
-    float _collisionRadius;
-    bool _isCollected;
-    std::string _puzzleIdRequired;
-    bool _isVisible;
 };
 
-#endif // KEY_H
+#endif // CONTROLPANEL_H

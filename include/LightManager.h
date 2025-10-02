@@ -30,11 +30,7 @@ public:
      */
     void updateFlashlight(const Vector3f& pos, const Vector3f& dir);
 
-    /**
-     * @brief Ativa uma fonte de luz de uma tocha específica no cenário.
-     * @param [in] torchID O identificador único da tocha a ser ativada.
-     */
-    void enableTorch(int torchID);
+    void setFlashlightColor(const Vector3f& color);
 };
 
 #endif // LIGHTMANAGER_H

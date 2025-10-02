@@ -8,49 +8,41 @@ PrimitiveObject::PrimitiveObject(PrimitiveShape shape, const Vector3f& position,
     _scale = scale;
 }
 
-void PrimitiveObject::update(float deltaTime) {
+void PrimitiveObject::update(float deltaTime, GameStateManager& gameStateManager) {
     // Objetos de teste são estáticos.
 }
 
 void PrimitiveObject::render() {
-    // Define o material do objeto com a cor especificada.
     GLfloat diffuse_material[] = { _color.x, _color.y, _color.z, 1.0f };
-    GLfloat specular_material[] = { 0.5f, 0.5f, 0.5f, 1.0f }; // Um brilho branco genérico
+    GLfloat specular_material[] = { 0.5f, 0.5f, 0.5f, 1.0f };
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diffuse_material);
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular_material);
     glMaterialf(GL_FRONT, GL_SHININESS, 50.0f);
 
     glPushMatrix();
-
-    // Aplica as transformações de posição e escala.
     glTranslatef(_position.x, _position.y, _position.z);
     glScalef(_scale.x, _scale.y, _scale.z);
 
-    // Usa um switch para decidir qual primitiva do GLUT desenhar.
     switch (_shape) {
         case PrimitiveShape::SPHERE:
-            // Parâmetros: (raio, fatias, pilhas)
             glutSolidSphere(1.0, 32, 32);
             break;
-
         case PrimitiveShape::CONE:
-            // O cone do GLUT é desenhado deitado no eixo Z, então o rotacionamos
-            // -90 graus no eixo X para que ele fique "em pé".
             glRotatef(-90, 1.0f, 0.0f, 0.0f);
-            // Parâmetros: (raio da base, altura, fatias, pilhas)
             glutSolidCone(1.0, 2.0, 32, 32);
             break;
-
         case PrimitiveShape::TORUS:
-            // Parâmetros: (raio interno, raio externo, lados, anéis)
             glutSolidTorus(0.5, 1.0, 32, 32);
             break;
-
         case PrimitiveShape::TEAPOT:
-            // Parâmetros: (tamanho)
             glutSolidTeapot(1.0);
             break;
     }
-
     glPopMatrix();
+}
+
+// Método implementado
+BoundingBox PrimitiveObject::getBoundingBox() const {
+    // Retorna uma caixa "inválida" porque este objeto é apenas visual.
+    return {{0,0,0}, {0,0,0}};
 }

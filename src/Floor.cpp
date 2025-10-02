@@ -6,46 +6,58 @@ Floor::Floor(const Vector3f& position, const Vector2f& size) {
     _size = size;
 }
 
-void Floor::update(float deltaTime) {
-    // O chão é estático.
+void Floor::update(float deltaTime, GameStateManager& gameStateManager) {
+    // Estático
 }
 
 void Floor::render() {
-    // --- 1. DESENHA A BASE SÓLIDA DO CHÃO ---
-    GLfloat floor_diffuse[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat floor_specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat floor_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+    GLfloat floor_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, floor_diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, floor_specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, 10.0f);
+    glMaterialf(GL_FRONT, GL_SHININESS, 128.0f);
+    glNormal3f(0.0f, 1.0f, 0.0f);
 
-    glPushMatrix();
-    glTranslatef(_position.x, _position.y, _position.z);
-    glScalef(_size.x, 0.1f, _size.y);
-    glutSolidCube(1.0f);
-    glPopMatrix();
+    int divisions = 70;
+    float halfWidth = _size.x / 2.0f;
+    float halfDepth = _size.y / 2.0f;
+    float startX = _position.x - halfWidth;
+    float startZ = _position.z - halfDepth;
+    float segmentWidth = _size.x / divisions;
+    float segmentDepth = _size.y / divisions;
 
-    // --- 2. DESENHA O GRID POR CIMA DO CHÃO ---
-    glDisable(GL_LIGHTING); // Desabilita a iluminação para as linhas do grid
-
-    glColor3f(0.4f, 0.4f, 0.4f); // Define a cor do grid (cinza claro)
-    glBegin(GL_LINES);
-
-    // O topo do nosso chão está em Y = 0.05 (metade da altura do cubo escalado).
-    // Desenhamos o grid um pouco acima disso para evitar Z-fighting.
-    float grid_y = 0.051f;
-
-    // Desenha as linhas ao longo do eixo Z
-    for (float i = -_size.x / 2.0f; i <= _size.x / 2.0f; i += 1.0f) {
-        glVertex3f(i, grid_y, -_size.y / 2.0f);
-        glVertex3f(i, grid_y,  _size.y / 2.0f);
+    glBegin(GL_QUADS);
+    for (int i = 0; i < divisions; ++i) {
+        for (int j = 0; j < divisions; ++j) {
+            float currentX = startX + i * segmentWidth;
+            float currentZ = startZ + j * segmentDepth;
+            glVertex3f(currentX, _position.y, currentZ);
+            glVertex3f(currentX + segmentWidth, _position.y, currentZ);
+            glVertex3f(currentX + segmentWidth, _position.y, currentZ + segmentDepth);
+            glVertex3f(currentX, _position.y, currentZ + segmentDepth);
+        }
     }
-
-    // Desenha as linhas ao longo do eixo X
-    for (float i = -_size.y / 2.0f; i <= _size.y / 2.0f; i += 1.0f) {
-        glVertex3f(-_size.x / 2.0f, grid_y, i);
-        glVertex3f( _size.x / 2.0f, grid_y, i);
-    }
-
     glEnd();
-    glEnable(GL_LIGHTING); // Reabilita a iluminação para o resto da cena
+
+    glDisable(GL_LIGHTING);
+    glColor3f(0.1f, 0.1f, 0.1f);
+    glBegin(GL_LINES);
+    float grid_y = _position.y + 0.01f;
+    for (int i = 0; i <= divisions; i++) {
+        float currentX = startX + i * segmentWidth;
+        glVertex3f(currentX, grid_y, -halfDepth);
+        glVertex3f(currentX, grid_y,  halfDepth);
+    }
+    for (int j = 0; j <= divisions; j++) {
+        float currentZ = startZ + j * segmentDepth;
+        glVertex3f(-halfWidth, grid_y, currentZ);
+        glVertex3f( halfWidth, grid_y, currentZ);
+    }
+    glEnd();
+    glEnable(GL_LIGHTING);
+}
+
+BoundingBox Floor::getBoundingBox() const {
+    // O chão não é um obstáculo colidível.
+    return {{0,0,0}, {0,0,0}};
 }

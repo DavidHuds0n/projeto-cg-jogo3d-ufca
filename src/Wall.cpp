@@ -6,8 +6,9 @@ Wall::Wall(const Vector3f& position, const Vector3f& size) {
     _size = size;
 }
 
-void Wall::update(float deltaTime) {
-    // As paredes são estáticas.
+// Implementação do update atualizada (corpo vazio)
+void Wall::update(float deltaTime, GameStateManager& gameStateManager) {
+    // Paredes são estáticas.
 }
 
 void Wall::render() {
@@ -81,4 +82,17 @@ void Wall::render() {
     glEnd();
 
     glPopMatrix();
+}
+
+// --- ADICIONE ESTE MÉTODO INTEIRO NO FINAL DO ARQUIVO ---
+BoundingBox Wall::getBoundingBox() const {
+    BoundingBox box;
+    float halfWidth = _size.x / 2.0f;
+    float halfHeight = _size.y / 2.0f;
+    float halfDepth = _size.z / 2.0f;
+
+    box.min = { _position.x - halfWidth, _position.y - halfHeight, _position.z - halfDepth };
+    box.max = { _position.x + halfWidth, _position.y + halfHeight, _position.z + halfDepth };
+
+    return box;
 }

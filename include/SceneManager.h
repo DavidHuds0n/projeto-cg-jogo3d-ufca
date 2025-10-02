@@ -35,7 +35,8 @@ public:
      * @brief Atualiza a lógica da sala atualmente ativa.
      * @param deltaTime O tempo decorrido desde o último frame.
      */
-    void update(float deltaTime);
+    // ATUALIZE A ASSINATURA AQUI
+    void update(float deltaTime, GameStateManager& gameStateManager);
 
     /**
      * @brief Renderiza a sala atualmente ativa.
@@ -44,6 +45,7 @@ public:
 
     std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
     void switchToRoom(int roomIndex); // <-- ADICIONE ESTE MÉTODO
+    const std::vector<GameObject*>& getCurrentRoomObjects() const;
 
 private:
     // Vetor que armazena ponteiros para todas as salas do jogo.

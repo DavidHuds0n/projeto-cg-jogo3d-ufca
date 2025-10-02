@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "LightManager.h"
 #include "SceneManager.h" // Adicionado
+#include "GameStateManager.h" // <-- ADICIONE AQUI
 
 /**
  * @file Game.h
@@ -52,6 +53,7 @@ private:
     Player       _player;
     LightManager _lightManager;
     SceneManager _sceneManager;   // Substitui o antigo 'Level'
+    GameStateManager _gameStateManager; // <-- ADICIONE AQUI
     GameState    _currentState;
 };
 

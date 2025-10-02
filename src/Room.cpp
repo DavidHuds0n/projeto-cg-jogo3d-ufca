@@ -34,11 +34,12 @@ void Room::addObject(GameObject* object) {
     }
 }
 
-void Room::update(float deltaTime) {
-    // Delega a chamada de 'update' para cada objeto na sala.
-    // Isso permite que cada objeto controle sua própria lógica de forma independente.
+// ATUALIZE A ASSINATURA E A CHAMADA AQUI
+void Room::update(float deltaTime, GameStateManager& gameStateManager) {
+    // Delega a chamada de 'update' para cada objeto na sala,
+    // agora passando também o gameStateManager.
     for (GameObject* obj : _objects) {
-        obj->update(deltaTime);
+        obj->update(deltaTime, gameStateManager);
     }
 }
 
@@ -54,3 +55,5 @@ void Room::render() {
 std::vector<InteractableObject*>& Room::getInteractableObjects() {
     return _interactables;
 }
+
+const std::vector<GameObject*>& Room::getObjects() const { return _objects; }

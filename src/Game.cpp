@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 // --- FUNÇÕES AUXILIARES DE RAY CASTING ---
 
@@ -98,8 +99,14 @@ void Game::init() {
 
 void Game::update(float deltaTime) {
     if (_currentState == PLAYING) {
-        _player.update(deltaTime);
-        _sceneManager.update(deltaTime);
+        // ATUALIZE ESTA LINHA para passar a lista de objetos
+        _player.update(deltaTime, _sceneManager.getCurrentRoomObjects(), _gameStateManager);
+
+        // PASSE O GAMESTATEMANAGER AQUI
+        _sceneManager.update(deltaTime, _gameStateManager);
+
+        Vector3f currentColor = _gameStateManager.getCurrentFlashlightColor();
+        _lightManager.setFlashlightColor(currentColor);
     }
     glutPostRedisplay();
 }
@@ -148,8 +155,10 @@ void Game::processInteraction() {
     if (closestObject) {
         // 5a. Verifica se o objeto atingido está perto o suficiente do jogador.
         if (closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
+
+            // A mágica acontece aqui!
             // Se estiver perto, chama a função de interação específica do objeto.
-            closestObject->onClick();
+            closestObject->onClick(_gameStateManager); // <-- PASSA O GERENCIADOR
 
             // 5b. Caso especial: Se o objeto for uma porta, executa a lógica de transição.
             Door* door = dynamic_cast<Door*>(closestObject);
@@ -173,16 +182,33 @@ void Game::processInteraction() {
 // --- Processamento de Entrada ---
 
 void Game::processKeyDown(unsigned char key, int x, int y) {
-    key = tolower(key);
-
-    if (key == 27) { // Tecla ESC
-        glutLeaveMainLoop();
+    // Se o keypad está ativo, a entrada do teclado é para o código
+    if (_gameStateManager.isKeypadActive()) {
+        if (key >= '0' && key <= '9') {
+            _gameStateManager.appendToKeypadInput(key);
+            // Se o código tem 3 dígitos, verifica
+            if (_gameStateManager.getKeypadInput().length() == 3) {
+                if (_gameStateManager.checkKeypadCode("742")) { // O código correto!
+                    _gameStateManager.setPuzzleState(PuzzleID::Sala1_CodigoCaixa, true);
+                    std::cout << "CAIXA DESTRANCADA!" << std::endl;
+                }
+                _gameStateManager.setActiveKeypad(false); // Desativa o keypad após a tentativa
+            }
+        } else if (key == 27 || key == 'e') { // Permite sair do modo keypad com ESC ou E
+            _gameStateManager.setActiveKeypad(false);
+            std::cout << "Keypad desativado." << std::endl;
+        }
+        return; // Impede que o jogador ande enquanto digita
     }
 
+    // Lógica normal de input se o keypad não estiver ativo
+    key = tolower(key);
+    if (key == 27) {
+        glutLeaveMainLoop();
+    }
     if (key == 'e') {
         processInteraction();
     }
-
     _player.handleKeyDown(key);
 }
 
