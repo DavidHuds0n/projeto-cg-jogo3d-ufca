@@ -6,7 +6,6 @@ Wall::Wall(const Vector3f& position, const Vector3f& size) {
     _size = size;
 }
 
-// Implementação do update atualizada (corpo vazio)
 void Wall::update(float deltaTime, GameStateManager& gameStateManager) {
     // Paredes são estáticas.
 }
@@ -21,37 +20,24 @@ void Wall::render() {
 
     glPushMatrix();
 
-    // --- CORREÇÃO AQUI: Cálculo dinâmico da normal ---
     bool isHorizontal = (_size.x > _size.z);
-    if (isHorizontal) { // Parede de frente ou fundo
-        // Se a parede está na frente (Z > 0), a normal aponta para dentro (-Z).
-        // Se está atrás (Z < 0), a normal aponta para dentro (+Z).
-        if (_position.z > 0) {
-            glNormal3f(0.0f, 0.0f, -1.0f);
-        } else {
-            glNormal3f(0.0f, 0.0f, 1.0f);
-        }
-    } else { // Parede da esquerda ou direita
-        // Se a parede está à direita (X > 0), a normal aponta para dentro (-X).
-        // Se está à esquerda (X < 0), a normal aponta para dentro (+X).
-        if (_position.x > 0) {
-            glNormal3f(-1.0f, 0.0f, 0.0f);
-        } else {
-            glNormal3f(1.0f, 0.0f, 0.0f);
-        }
+
+    // Define a normal correta para a iluminação
+    if (isHorizontal) {
+        if (_position.z > 0) glNormal3f(0.0f, 0.0f, -1.0f);
+        else glNormal3f(0.0f, 0.0f, 1.0f);
+    } else {
+        if (_position.x > 0) glNormal3f(-1.0f, 0.0f, 0.0f);
+        else glNormal3f(1.0f, 0.0f, 0.0f);
     }
 
-    // O resto do código para desenhar a grade continua o mesmo
     int divisions = 70;
-
     float halfWidth = _size.x / 2.0f;
     float halfHeight = _size.y / 2.0f;
     float halfDepth = _size.z / 2.0f;
-
     float startX = _position.x - halfWidth;
     float startY = _position.y - halfHeight;
     float startZ = _position.z - halfDepth;
-
     float segmentWidth = _size.x / divisions;
     float segmentHeight = _size.y / divisions;
     float segmentDepth = _size.z / divisions;
@@ -59,32 +45,43 @@ void Wall::render() {
     glBegin(GL_QUADS);
     for (int i = 0; i < divisions; ++i) {
         for (int j = 0; j < divisions; ++j) {
-            if (isHorizontal) { // Parede orientada no eixo X
+            if (isHorizontal) { // Parede orientada no eixo X (frente/fundo)
                 float currentX = startX + i * segmentWidth;
                 float currentY = startY + j * segmentHeight;
 
-                glVertex3f(currentX,              currentY,               _position.z);
-                glVertex3f(currentX + segmentWidth, currentY,               _position.z);
-                glVertex3f(currentX + segmentWidth, currentY + segmentHeight, _position.z);
-                glVertex3f(currentX,              currentY + segmentHeight, _position.z);
-
-            } else { // Parede orientada no eixo Z
+                if (_position.z > 0) { // Parede da FRENTE (Z > 0) - Ordem invertida
+                    glVertex3f(currentX,              currentY,               _position.z);
+                    glVertex3f(currentX,              currentY + segmentHeight, _position.z);
+                    glVertex3f(currentX + segmentWidth, currentY + segmentHeight, _position.z);
+                    glVertex3f(currentX + segmentWidth, currentY,               _position.z);
+                } else { // Parede de TRÁS (Z < 0) - Ordem normal
+                    glVertex3f(currentX,              currentY,               _position.z);
+                    glVertex3f(currentX + segmentWidth, currentY,               _position.z);
+                    glVertex3f(currentX + segmentWidth, currentY + segmentHeight, _position.z);
+                    glVertex3f(currentX,              currentY + segmentHeight, _position.z);
+                }
+            } else { // Parede orientada no eixo Z (esquerda/direita)
                 float currentZ = startZ + i * segmentDepth;
                 float currentY = startY + j * segmentHeight;
 
-                glVertex3f(_position.x, currentY,               currentZ);
-                glVertex3f(_position.x, currentY,               currentZ + segmentDepth);
-                glVertex3f(_position.x, currentY + segmentHeight, currentZ + segmentDepth);
-                glVertex3f(_position.x, currentY + segmentHeight, currentZ);
+                if (_position.x > 0) { // Parede da DIREITA (X > 0) - Ordem invertida
+                    glVertex3f(_position.x, currentY,               currentZ + segmentDepth);
+                    glVertex3f(_position.x, currentY + segmentHeight, currentZ + segmentDepth);
+                    glVertex3f(_position.x, currentY + segmentHeight, currentZ);
+                    glVertex3f(_position.x, currentY,               currentZ);
+                } else { // Parede da ESQUERDA (X < 0) - Ordem normal
+                    glVertex3f(_position.x, currentY,               currentZ + segmentDepth);
+                    glVertex3f(_position.x, currentY,               currentZ);
+                    glVertex3f(_position.x, currentY + segmentHeight, currentZ);
+                    glVertex3f(_position.x, currentY + segmentHeight, currentZ + segmentDepth);
+                }
             }
         }
     }
     glEnd();
-
     glPopMatrix();
 }
 
-// --- ADICIONE ESTE MÉTODO INTEIRO NO FINAL DO ARQUIVO ---
 BoundingBox Wall::getBoundingBox() const {
     BoundingBox box;
     float halfWidth = _size.x / 2.0f;

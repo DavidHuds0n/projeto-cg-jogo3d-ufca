@@ -1,11 +1,12 @@
 #include "../include/SceneManager.h"
 
-// Includes
+// Includes para todos os objetos que vamos criar nas salas
 #include "../include/Floor.h"
 #include "../include/Wall.h"
 #include "../include/Key.h"
 #include "../include/Door.h"
 #include "../include/ControlPanel.h"
+#include "../include/TestButton.h"
 #include "../include/PrimitiveObject.h"
 
 #include <cstddef>
@@ -26,7 +27,7 @@ void SceneManager::init() {
     // --- CRIAÇÃO DA SALA 1 ---
     Room* room1 = new Room();
     {
-        // Estrutura da sala
+        // Estrutura
         room1->addObject(new Floor({0.0f, 0.0f, 0.0f}, {20.0f, 20.0f}));
         const float wallHeight = 4.0f;
         const float roomSize = 10.0f;
@@ -39,15 +40,17 @@ void SceneManager::init() {
         room1->addObject(new Door({0.0f, 1.0f, -9.5f}, 1, {0.0f, 1.0f, 6.5f}, ItemType::CHAVE_SALA_1));
 
         // --- OBJETOS DA SALA 1 ---
-        // Chave da Sala 1 (cor padrão) no centro
         room1->addObject(new Key({0.0f, 1.0f, 0.0f}, ItemType::CHAVE_SALA_1, ""));
+        room1->addObject(new ControlPanel({2.5f, 1.5f, -9.0f}));
+        room1->addObject(new TestButton({-8.0f, 1.0f, 8.0f}));
+        room1->addObject(new PrimitiveObject(PrimitiveShape::CONE, {8.0f, 1.0f, 8.0f}, {0.1f, 0.8f, 0.1f}));
     }
     _rooms.push_back(room1);
 
     // --- CRIAÇÃO DA SALA 2 ---
     Room* room2 = new Room();
     {
-        // Estrutura da sala
+        // Estrutura
         room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {15.0f, 15.0f}));
         const float wallHeight = 4.0f;
         const float roomSize = 7.5f;
@@ -56,20 +59,22 @@ void SceneManager::init() {
         room2->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
         room2->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
-        // Portas de conexão
+        // Portas
         room2->addObject(new Door({0.0f, 1.0f, 7.0f}, 0, {0.0f, 1.0f, -8.5f}, ItemType::NENHUM));
         room2->addObject(new Door({0.0f, 1.0f, -7.0f}, 2, {0.0f, 1.0f, 4.0f}, ItemType::CHAVE_SALA_2));
 
         // --- OBJETOS DA SALA 2 ---
-        // Chave da Sala 2 (cor padrão) no centro
         room2->addObject(new Key({0.0f, 1.0f, 0.0f}, ItemType::CHAVE_SALA_2, ""));
+        room2->addObject(new ControlPanel({-2.5f, 1.5f, -6.5f}));
+        room2->addObject(new TestButton({6.0f, 1.0f, -6.0f}));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {6.0f, 1.0f, 6.0f}, {0.8f, 0.8f, 0.1f}));
     }
     _rooms.push_back(room2);
 
     // --- CRIAÇÃO DA SALA 3 ---
     Room* room3 = new Room();
     {
-        // Estrutura da sala
+        // Estrutura
         room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
         const float wallHeight = 4.0f;
         const float roomSize = 5.0f;
@@ -78,16 +83,17 @@ void SceneManager::init() {
         room3->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
         room3->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
-        // Porta de volta para a Sala 2
+        // Porta
         room3->addObject(new Door({0.0f, 1.0f, 4.5f}, 1, {0.0f, 1.0f, -6.0f}, ItemType::NENHUM));
 
         // --- OBJETOS DA SALA 3 ---
-        // Painel de controle no centro
         room3->addObject(new ControlPanel({0.0f, 1.5f, 0.0f}));
+        room3->addObject(new TestButton({-4.0f, 1.0f, -4.0f}));
+        room3->addObject(new PrimitiveObject(PrimitiveShape::TORUS, {4.0f, 1.0f, -4.0f}, {0.9f, 0.5f, 0.1f}));
     }
     _rooms.push_back(room3);
 
-    // O jogo começa na Sala 1
+    // Início na Sala 1
     if (!_rooms.empty()) {
         _currentRoomIndex = 0;
     }

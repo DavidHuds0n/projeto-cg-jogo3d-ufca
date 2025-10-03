@@ -86,6 +86,13 @@ void Game::init() {
     glEnable(GL_NORMALIZE);
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
+    // --- ADICIONE ESTAS DUAS LINHAS AQUI ---
+    // Habilita o descarte de faces
+    glEnable(GL_CULL_FACE);
+    // Especifica que as faces de TRÁS (GL_BACK) devem ser descartadas
+    glCullFace(GL_BACK);
+    // -----------------------------------------
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45.0, (float)Config::SCREEN_WIDTH / (float)Config::SCREEN_HEIGHT, Config::CAMERA_ZNEAR, Config::CAMERA_ZFAR);

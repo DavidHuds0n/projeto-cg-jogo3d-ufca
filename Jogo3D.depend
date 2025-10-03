@@ -603,7 +603,7 @@
 	"Vector.h"
 	"GameStateManager.h"
 
-1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
+1759525200 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
 
 1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\floor.cpp
 	"../include/Floor.h"
@@ -619,7 +619,7 @@
 	<cmath>
 	"../include/Config.h"
 
-1759518984 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\game.cpp
+1759524316 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\game.cpp
 	"../include/Game.h"
 	"../include/Config.h"
 	"../include/Ray.h"
@@ -669,13 +669,14 @@
 	"../include/Room.h"
 	"../include/InteractableObject.h"
 
-1759520470 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
+1759525159 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
 	"../include/SceneManager.h"
 	"../include/Floor.h"
 	"../include/Wall.h"
 	"../include/Key.h"
 	"../include/Door.h"
 	"../include/ControlPanel.h"
+	"../include/TestButton.h"
 	"../include/PrimitiveObject.h"
 	<cstddef>
 	<iostream>
@@ -702,7 +703,7 @@
 	"../include/PrimitiveObject.h"
 	<iostream>
 
-1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
+1759524955 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
 	"../include/Wall.h"
 	<GL/freeglut.h>
 
