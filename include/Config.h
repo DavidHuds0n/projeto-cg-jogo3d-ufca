@@ -47,7 +47,7 @@ namespace Config {
 
     // --- Iluminação ---
     /** @brief Intensidade da luz ambiente global. */
-    static const float AMBIENT_LIGHT_INTENSITY = 0.1f;
+    static const float AMBIENT_LIGHT_INTENSITY = 0.2f;
     /** @brief Ângulo de abertura do cone de luz da lanterna. */
     static const float FLASHLIGHT_CUTOFF = 25.0f;
     /** @brief Expoente que define a suavidade da borda do cone de luz. */
