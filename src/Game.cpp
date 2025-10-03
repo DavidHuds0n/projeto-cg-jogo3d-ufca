@@ -126,50 +126,49 @@ void Game::render() {
 void Game::processInteraction() {
     std::cout << "Tecla 'E' pressionada! Calculando Ray Casting..." << std::endl;
 
-    // 1. Calcula um raio 3D que "sai" da câmera, passando pelo centro da tela.
     Ray ray = calculateMouseRay(Config::SCREEN_WIDTH / 2, Config::SCREEN_HEIGHT / 2, _player);
 
-    // 2. Prepara variáveis para encontrar o objeto interativo mais próximo que foi atingido.
     InteractableObject* closestObject = nullptr;
     float closestHitDistance = std::numeric_limits<float>::max();
 
-    // 3. Pede ao SceneManager a lista de todos os objetos interativos da sala atual.
     std::vector<InteractableObject*>& interactables = _sceneManager.getInteractableObjects();
 
-    // 4. Percorre a lista de interativos, testando a colisão do raio com cada um.
     for (auto* obj : interactables) {
         if (obj->isInteractable()) {
-            // Testa a colisão do raio com a esfera de colisão do objeto.
             float hitDistance = rayIntersectsSphere(ray, obj->getPosition(), obj->getCollisionRadius());
-
-            // Se o raio atingiu o objeto (dist > 0) e este é o mais próximo até agora...
             if (hitDistance > 0 && hitDistance < closestHitDistance) {
-                // ...guarda a distância e o ponteiro para este objeto.
                 closestHitDistance = hitDistance;
                 closestObject = obj;
             }
         }
     }
 
-    // 5. Após testar todos os objetos, verifica se algum foi atingido.
     if (closestObject) {
-        // 5a. Verifica se o objeto atingido está perto o suficiente do jogador.
         if (closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
+            closestObject->onClick(_gameStateManager);
 
-            // A mágica acontece aqui!
-            // Se estiver perto, chama a função de interação específica do objeto.
-            closestObject->onClick(_gameStateManager); // <-- PASSA O GERENCIADOR
-
-            // 5b. Caso especial: Se o objeto for uma porta, executa a lógica de transição.
+            // --- LÓGICA DE TRANSIÇÃO COM VERIFICAÇÃO ---
             Door* door = dynamic_cast<Door*>(closestObject);
             if (door) {
-                // Pega o índice da sala de destino da porta.
-                int targetRoom = door->getTargetRoomIndex();
-                // Manda o SceneManager trocar de sala.
-                _sceneManager.switchToRoom(targetRoom);
+                ItemType requiredItem = door->getRequiredItem();
 
-                // Reposiciona o jogador na coordenada de spawn definida na porta.
-                _player.setPosition(door->getSpawnPosition());
+                // --- LÓGICA ATUALIZADA AQUI ---
+                // A porta abre se não requer item OU se o jogador tem o item.
+                if (requiredItem == ItemType::NENHUM || _gameStateManager.playerHasItem(requiredItem)) {
+
+                    std::cout << "Porta aberta!" << std::endl;
+                    int targetRoom = door->getTargetRoomIndex();
+                    _sceneManager.switchToRoom(targetRoom);
+                    _player.setPosition(door->getSpawnPosition());
+
+                    // Não vamos remover o item NENHUM do inventário
+                    if (requiredItem != ItemType::NENHUM) {
+                       // _gameStateManager.removeItemFromInventory(requiredItem); // Descomente se quiser que a chave seja consumida
+                    }
+
+                } else {
+                    std::cout << "A porta esta trancada. Voce precisa de um item." << std::endl;
+                }
             }
         } else {
             std::cout << "Objeto encontrado, mas esta longe demais para interagir!" << std::endl;
@@ -178,7 +177,6 @@ void Game::processInteraction() {
         std::cout << "Nenhum objeto interativo na mira." << std::endl;
     }
 }
-
 // --- Processamento de Entrada ---
 
 void Game::processKeyDown(unsigned char key, int x, int y) {

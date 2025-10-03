@@ -3,18 +3,18 @@
 
 #include "InteractableObject.h"
 #include "PrimitiveObject.h"
+#include "GameData.h" // Inclua para o ItemType
 #include <string>
 
 class Key : public InteractableObject {
 public:
-    Key(const Vector3f& position, const std::string& puzzleIdRequired);
+    // Construtor atualizado para receber um ItemType
+    Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired = "");
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
     virtual void onClick(GameStateManager& gameStateManager) override;
     virtual float getCollisionRadius() const override;
-
-    // --- ADICIONE ESTA LINHA ---
     virtual BoundingBox getBoundingBox() const override;
 
 private:
@@ -23,6 +23,7 @@ private:
     bool _isCollected;
     std::string _puzzleIdRequired;
     bool _isVisible;
+    ItemType _keyType; // Armazena o tipo desta chave
 };
 
 #endif // KEY_H

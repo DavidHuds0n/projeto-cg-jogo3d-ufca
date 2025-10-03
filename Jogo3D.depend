@@ -549,77 +549,77 @@
 1759384606 c:\users\outer\onedrive\documentos\cg\code\projeto-cg-jogo3d-ufca\include\keypad.h
 	"InteractableObject.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\main.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\main.cpp
 	<GL/freeglut.h>
 	"include/Game.h"
 	"include/Config.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\game.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\game.h
 	"Player.h"
 	"LightManager.h"
 	"SceneManager.h"
 	"GameStateManager.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\player.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\player.h
 	"FPSCamera.h"
 	"GameObject.h"
 	"GameStateManager.h"
 	<map>
 	<vector>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\fpscamera.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\fpscamera.h
 	"Vector.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\vector.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\vector.h
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gameobject.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gameobject.h
 	"Vector.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gamestatemanager.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gamestatemanager.h
 	<map>
 	<string>
 	<vector>
 	"GameData.h"
 	"Vector.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gamedata.h
+1759518931 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\gamedata.h
 	<string>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\lightmanager.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\lightmanager.h
 	"Player.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\scenemanager.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\scenemanager.h
 	<vector>
 	"Room.h"
 	"InteractableObject.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\room.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\room.h
 	<vector>
 	"GameObject.h"
 	"InteractableObject.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\interactableobject.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\interactableobject.h
 	"GameObject.h"
 	"Vector.h"
 	"GameStateManager.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\floor.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\floor.cpp
 	"../include/Floor.h"
 	<GL/freeglut.h>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\floor.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\floor.h
 	"GameObject.h"
 	"Vector.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\fpscamera.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\fpscamera.cpp
 	"../include/FPSCamera.h"
 	<GL/freeglut.h>
 	<cmath>
 	"../include/Config.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\game.cpp
+1759518984 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\game.cpp
 	"../include/Game.h"
 	"../include/Config.h"
 	"../include/Ray.h"
@@ -631,25 +631,25 @@
 	<limits>
 	<vector>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\ray.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\ray.h
 	"Vector.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\door.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\door.h
 	"InteractableObject.h"
 	"PrimitiveObject.h"
 	"Vector.h"
 	"GameData.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\primitiveobject.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\primitiveobject.h
 	"GameObject.h"
 	"Vector.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\lightmanager.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\lightmanager.cpp
 	"../include/LightManager.h"
 	"../include/Config.h"
 	<GL/freeglut.h>
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\player.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\player.cpp
 	"../include/Player.h"
 	<cmath>
 	"../include/Config.h"
@@ -657,53 +657,85 @@
 	"../include/GameObject.h"
 	"../include/Wall.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\wall.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\wall.h
 	"GameObject.h"
 	"Vector.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\primitiveobject.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\primitiveobject.cpp
 	"../include/PrimitiveObject.h"
 	<GL/freeglut.h>
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\room.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\room.cpp
 	"../include/Room.h"
 	"../include/InteractableObject.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
+1759520470 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
 	"../include/SceneManager.h"
 	"../include/Floor.h"
 	"../include/Wall.h"
-	"../include/PrimitiveObject.h"
-	"../include/TestButton.h"
 	"../include/Key.h"
 	"../include/Door.h"
 	"../include/ControlPanel.h"
-	"../include/Keypad.h"
+	"../include/PrimitiveObject.h"
 	<cstddef>
 	<iostream>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\testbutton.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\testbutton.h
 	"InteractableObject.h"
 	"PrimitiveObject.h"
 	"Vector.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\key.h
+1759519802 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\key.h
 	"InteractableObject.h"
 	"PrimitiveObject.h"
+	"GameData.h"
 	<string>
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\controlpanel.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\controlpanel.h
 	"InteractableObject.h"
 
-1759440268 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\keypad.h
+1759440629 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\keypad.h
 	"InteractableObject.h"
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\testbutton.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\testbutton.cpp
 	"../include/TestButton.h"
 	"../include/PrimitiveObject.h"
 	<iostream>
 
-1759440268 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
 	"../include/Wall.h"
 	<GL/freeglut.h>
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\collectableshape.cpp
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\controlpanel.cpp
+	"../include/ControlPanel.h"
+	"../include/PrimitiveObject.h"
+	<GL/freeglut.h>
+	<iostream>
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\door.cpp
+	"../include/Door.h"
+	<iostream>
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\gamestatemanager.cpp
+	"../include/GameStateManager.h"
+	<algorithm>
+	<iostream>
+
+1759519821 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\key.cpp
+	"../include/Key.h"
+	<iostream>
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\keypad.cpp
+	"../include/Keypad.h"
+	"../include/PrimitiveObject.h"
+	<GL/freeglut.h>
+	<iostream>
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\movablevase.cpp
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\sequencebutton.cpp
+
+1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\shapesocket.cpp
 

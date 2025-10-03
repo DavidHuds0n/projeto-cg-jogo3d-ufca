@@ -1,19 +1,21 @@
 #include "../include/Key.h"
 #include <iostream>
 
-Key::Key(const Vector3f& position, const std::string& puzzleIdRequired)
+Key::Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired)
     : InteractableObject(position),
-      _visual(PrimitiveShape::CONE, position, {0.2f, 0.5f, 1.0f}, {0.4f, 0.4f, 0.4f}),
-      _puzzleIdRequired(puzzleIdRequired)
+      _visual(PrimitiveShape::CONE, position, {0.9f, 0.9f, 0.1f}, {0.4f, 0.4f, 0.4f}), // Cor dourada
+      _puzzleIdRequired(puzzleIdRequired),
+      _keyType(keyType)
 {
     _collisionRadius = 0.5f;
     _isCollected = false;
-    _isVisible = false;
-    setInteractable(false);
+    // Se não depende de puzzle, já começa visível
+    _isVisible = puzzleIdRequired.empty();
+    setInteractable(puzzleIdRequired.empty());
 }
 
 void Key::update(float deltaTime, GameStateManager& gameStateManager) {
-    if (!_isVisible && gameStateManager.isPuzzleSolved(_puzzleIdRequired)) {
+    if (!_isVisible && !_puzzleIdRequired.empty() && gameStateManager.isPuzzleSolved(_puzzleIdRequired)) {
         std::cout << "O puzzle foi resolvido! A chave apareceu!" << std::endl;
         _isVisible = true;
         setInteractable(true);
@@ -32,7 +34,8 @@ void Key::onClick(GameStateManager& gameStateManager) {
     std::cout << "*** Chave Coletada! ***" << std::endl;
     _isCollected = true;
     setInteractable(false);
-    gameStateManager.addItemToInventory(ItemType::CHAVE_SALA_1);
+    // Adiciona o TIPO CORRETO de chave ao inventário
+    gameStateManager.addItemToInventory(_keyType);
 }
 
 float Key::getCollisionRadius() const {
@@ -40,6 +43,5 @@ float Key::getCollisionRadius() const {
 }
 
 BoundingBox Key::getBoundingBox() const {
-    // A chave não é um obstáculo físico.
     return {{0,0,0}, {0,0,0}};
 }
