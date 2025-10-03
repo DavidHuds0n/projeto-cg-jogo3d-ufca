@@ -29,7 +29,7 @@ void SceneManager::init() {
     {
         // Estrutura
         room1->addObject(new Floor({0.0f, 0.0f, 0.0f}, {20.0f, 20.0f}));
-        const float wallHeight = 4.0f;
+        const float wallHeight = 5.0f;
         const float roomSize = 10.0f;
         room1->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
         room1->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
@@ -37,7 +37,7 @@ void SceneManager::init() {
         room1->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
         // Porta para a Sala 2 (requer a CHAVE_SALA_1)
-        room1->addObject(new Door({0.0f, 1.0f, -9.5f}, 1, {0.0f, 1.0f, 6.5f}, ItemType::CHAVE_SALA_1));
+        room1->addObject(new Door({0.0f, 1.0f, -9.5f}, 1, {0.0f, 1.6f, 6.5f}, ItemType::CHAVE_SALA_1));
 
         // --- OBJETOS DA SALA 1 ---
         room1->addObject(new Key({0.0f, 1.0f, 0.0f}, ItemType::CHAVE_SALA_1, ""));
@@ -52,7 +52,7 @@ void SceneManager::init() {
     {
         // Estrutura
         room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {15.0f, 15.0f}));
-        const float wallHeight = 4.0f;
+        const float wallHeight = 5.0f;
         const float roomSize = 7.5f;
         room2->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
         room2->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
@@ -60,8 +60,8 @@ void SceneManager::init() {
         room2->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
         // Portas
-        room2->addObject(new Door({0.0f, 1.0f, 7.0f}, 0, {0.0f, 1.0f, -8.5f}, ItemType::NENHUM));
-        room2->addObject(new Door({0.0f, 1.0f, -7.0f}, 2, {0.0f, 1.0f, 4.0f}, ItemType::CHAVE_SALA_2));
+        room2->addObject(new Door({0.0f, 1.0f, 7.0f}, 0, {0.0f, 1.6f, -8.5f}, ItemType::NENHUM));
+        room2->addObject(new Door({0.0f, 1.0f, -7.0f}, 2, {0.0f, 1.6f, 4.0f}, ItemType::CHAVE_SALA_2));
 
         // --- OBJETOS DA SALA 2 ---
         room2->addObject(new Key({0.0f, 1.0f, 0.0f}, ItemType::CHAVE_SALA_2, ""));
@@ -76,7 +76,7 @@ void SceneManager::init() {
     {
         // Estrutura
         room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
-        const float wallHeight = 4.0f;
+        const float wallHeight = 5.0f;
         const float roomSize = 5.0f;
         room3->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
         room3->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
@@ -84,7 +84,7 @@ void SceneManager::init() {
         room3->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
         // Porta
-        room3->addObject(new Door({0.0f, 1.0f, 4.5f}, 1, {0.0f, 1.0f, -6.0f}, ItemType::NENHUM));
+        room3->addObject(new Door({0.0f, 1.0f, 4.5f}, 1, {0.0f, 1.6f, -6.0f}, ItemType::NENHUM));
 
         // --- OBJETOS DA SALA 3 ---
         room3->addObject(new ControlPanel({0.0f, 1.5f, 0.0f}));
