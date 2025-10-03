@@ -669,7 +669,7 @@
 	"../include/Room.h"
 	"../include/InteractableObject.h"
 
-1759525159 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
+1759527467 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
 	"../include/SceneManager.h"
 	"../include/Floor.h"
 	"../include/Wall.h"

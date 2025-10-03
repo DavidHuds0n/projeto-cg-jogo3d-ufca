@@ -67,7 +67,6 @@
 		<Unit filename="include/TestButton.h" />
 		<Unit filename="include/Vector.h" />
 		<Unit filename="include/Wall.h" />
-		<Unit filename="main.cpp" />
 		<Unit filename="res/levels/maze.txt" />
 		<Unit filename="src/CollectableShape.cpp" />
 		<Unit filename="src/ControlPanel.cpp" />
@@ -88,6 +87,7 @@
 		<Unit filename="src/ShapeSocket.cpp" />
 		<Unit filename="src/TestButton.cpp" />
 		<Unit filename="src/Wall.cpp" />
+		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
