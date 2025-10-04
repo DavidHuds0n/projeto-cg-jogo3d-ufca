@@ -14,14 +14,21 @@ bool checkCollision(const BoundingBox& a, const BoundingBox& b) {
 
 // Construtor
 Player::Player() {
-    _position = {0.0f, 1.0f, 5.0f};
+    // Define a posição inicial do jogador e seus atributos de jogabilidade.
+    // ATUALIZAÇÃO AQUI: Aumentamos a altura do jogador.
+    _position = {0.0f, 1.6f, 5.0f}; // Posição inicial (x, y, z) - Y alterado de 1.0 para 1.6
+
     _movementSpeed = Config::PLAYER_SPEED;
     _collisionRadius = Config::PLAYER_COLLISION_RADIUS;
+
+    // Inicializa o estado de todas as teclas de movimento como 'false' (não pressionadas).
     _keyState['w'] = false;
     _keyState['a'] = false;
     _keyState['s'] = false;
     _keyState['d'] = false;
     _keyState['e'] = false;
+
+    // A câmera começa na mesma posição que o jogador.
     _camera.setPosition(_position);
 }
 

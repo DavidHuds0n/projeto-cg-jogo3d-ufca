@@ -603,9 +603,9 @@
 	"Vector.h"
 	"GameStateManager.h"
 
-1759525200 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
+1759526580 c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\include\config.h
 
-1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\floor.cpp
+1759527120 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\floor.cpp
 	"../include/Floor.h"
 	<GL/freeglut.h>
 
@@ -649,7 +649,7 @@
 	"../include/Config.h"
 	<GL/freeglut.h>
 
-1759440629 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\player.cpp
+1759525989 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\player.cpp
 	"../include/Player.h"
 	<cmath>
 	"../include/Config.h"
@@ -669,7 +669,7 @@
 	"../include/Room.h"
 	"../include/InteractableObject.h"
 
-1759525159 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
+1759527467 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\scenemanager.cpp
 	"../include/SceneManager.h"
 	"../include/Floor.h"
 	"../include/Wall.h"
@@ -703,7 +703,7 @@
 	"../include/PrimitiveObject.h"
 	<iostream>
 
-1759524955 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
+1759526882 source:c:\users\outer\onedrive\documentos\projeto-cg-jogo3d-ufca\src\wall.cpp
 	"../include/Wall.h"
 	<GL/freeglut.h>
 

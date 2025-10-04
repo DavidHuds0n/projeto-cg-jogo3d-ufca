@@ -6,8 +6,8 @@
  * registrar as funções de callback (render, update, teclado, mouse) e iniciar o loop principal.
  */
 #include <GL/freeglut.h>
-#include "include/Game.h"
-#include "include/Config.h"
+#include "../include/Game.h"
+#include "../include/Config.h"
 
 // --- Instância Global do Jogo ---
 /**
