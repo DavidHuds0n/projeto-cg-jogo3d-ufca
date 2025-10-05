@@ -49,7 +49,10 @@ public:
     std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
     const std::vector<GameObject*>& getObjects() const;
 
+    void setSpawnPoint(const Vector3f& pos) { _spawnPoint = pos; }
+    const Vector3f& getSpawnPoint() const { return _spawnPoint; }
 private:
+    Vector3f _spawnPoint = {0.0f, 1.6f, 0.0f};
     // Um vetor de ponteiros para GameObject. Armazena todas as entidades da sala.
     std::vector<GameObject*> _objects;
     std::vector<InteractableObject*> _interactables; // <-- ADICIONE ESTE VETOR

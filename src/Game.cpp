@@ -112,7 +112,7 @@ void Game::init() {
     glLoadIdentity();
 
     _lightManager.init();
-    _sceneManager.init();
+    _sceneManager.init(_player);
 }
 
 void Game::update(float deltaTime) {
@@ -122,7 +122,7 @@ void Game::update(float deltaTime) {
 
         // PASSE O GAMESTATEMANAGER AQUI
         _sceneManager.update(deltaTime, _gameStateManager);
-        _gameStateManager.processPending(_sceneManager);
+        _gameStateManager.processPending(_sceneManager,_player);
         Vector3f currentColor = _gameStateManager.getCurrentFlashlightColor();
         _lightManager.setFlashlightColor(currentColor);
     }
@@ -212,7 +212,7 @@ void Game::processInteraction() {
 
                     std::cout << "Porta aberta!" << std::endl;
                     int targetRoom = door->getTargetRoomIndex();
-                    _sceneManager.switchToRoom(targetRoom);
+                    _sceneManager.switchToRoom(targetRoom,_player);
                     _player.setPosition(door->getSpawnPosition());
 
                     // Não vamos remover o item NENHUM do inventário

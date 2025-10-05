@@ -101,9 +101,9 @@ bool GameStateManager::isKeypadActive() const {
     return _isKeypadActive;
 }
 
-void GameStateManager::processPending(SceneManager& sm){
-    if (_pendinRoom>=0){
-        sm.switchToRoom(_pendinRoom);
+void GameStateManager::processPending(SceneManager& sm, Player& player){
+    if (_pendinRoom >= 0) {
+        sm.switchToRoom(_pendinRoom, player); // passa o player
         _pendinRoom = -1;
     }
 }

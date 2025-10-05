@@ -8,6 +8,7 @@
 #include "Vector.h" // Incluído para o retorno de cor da lanterna
 #include "SceneManager.h"
 class SceneManager;
+class Player;
 class GameStateManager {
 public:
     /**
@@ -90,7 +91,7 @@ public:
     bool isKeypadActive() const;
 
     void queueRoomChange(int roomIndex) { _pendinRoom = roomIndex; }
-    void processPending(SceneManager& sm);
+    void processPending(SceneManager& sm, Player& player);
 
 private:
     // Armazena o estado (resolvido/não resolvido) de cada puzzle.
@@ -103,7 +104,7 @@ private:
     std::string _keypadInput;         // Armazena os dígitos inseridos pelo jogador
     bool _isKeypadActive; // <-- NOVA VARIÁVEL
     int _pendinRoom = -1;
-
+    float _player;
 };
 
 #endif // GAMESTATEMANAGER_H
