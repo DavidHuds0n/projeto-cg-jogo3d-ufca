@@ -55,6 +55,7 @@ private:
     SceneManager _sceneManager;   // Substitui o antigo 'Level'
     GameStateManager _gameStateManager; // <-- ADICIONE AQUI
     GameState    _currentState;
+    GameStateManager _gsm;
 };
 
 #endif // GAME_H

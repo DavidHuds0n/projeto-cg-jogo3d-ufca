@@ -37,6 +37,9 @@ void PrimitiveObject::render() {
         case PrimitiveShape::TEAPOT:
             glutSolidTeapot(1.0);
             break;
+          case PrimitiveShape::CUBE:
+            glutSolidCube(1.0);
+            break;
     }
     glPopMatrix();
 }

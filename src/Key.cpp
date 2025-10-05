@@ -1,9 +1,9 @@
 #include "../include/Key.h"
 #include <iostream>
 
-Key::Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired)
+Key::Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired, bool form)
     : InteractableObject(position),
-      _visual(PrimitiveShape::CONE, position, {0.9f, 0.9f, 0.1f}, {0.4f, 0.4f, 0.4f}), // Cor dourada
+      _visual(form ? PrimitiveShape::TEAPOT : PrimitiveShape::CONE, position, {0.9f, 0.9f, 0.1f}, {0.4f, 0.4f, 0.4f}), // Cor dourada
       _puzzleIdRequired(puzzleIdRequired),
       _keyType(keyType)
 {

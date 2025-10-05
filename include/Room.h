@@ -1,9 +1,11 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+
 #include <vector>
+
 #include "GameObject.h"
-#include "InteractableObject.h"
+
 
 /**
  * @file Room.h
@@ -12,6 +14,8 @@
  * A classe Room é um contêiner para todos os GameObjects que existem dentro
  * dela. É responsável por gerenciar o ciclo de vida (update, render) desses objetos.
  */
+
+class InteractableObject;
 class Room {
 public:
     /**

@@ -6,12 +6,23 @@
 #include "../include/Config.h"
 #include "../include/Ray.h"
 #include "../include/InteractableObject.h"
+#include "../include/PuzzleDoor.h"
 #include "../include/Door.h" // Incluído para a lógica de transição de sala
+#include "../include/SceneManager.h"
+#include "../include/GameStateManager.h"
 #include <GL/freeglut.h>
 #include <iostream>
 #include <cmath>
 #include <limits>
 #include <vector>
+
+// --- FUNÇÕES AUXILIARES ESTÁTICAS ---
+static void drawCenteredBitmapText(const char* msg, float x, float y) {
+    glRasterPos2f(x, y);
+    for (const char* p = msg; *p; ++p) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *p);
+    }
+}
 
 // --- FUNÇÕES AUXILIARES DE RAY CASTING ---
 
@@ -111,7 +122,7 @@ void Game::update(float deltaTime) {
 
         // PASSE O GAMESTATEMANAGER AQUI
         _sceneManager.update(deltaTime, _gameStateManager);
-
+        _gameStateManager.processPending(_sceneManager);
         Vector3f currentColor = _gameStateManager.getCurrentFlashlightColor();
         _lightManager.setFlashlightColor(currentColor);
     }
@@ -126,6 +137,32 @@ void Game::render() {
     _lightManager.updateFlashlight(_player.getCamera().getPosition(), _player.getCamera().getFrontVector());
 
     _sceneManager.render();
+
+    // Overlay para estados finais
+    if (_currentState != PLAYING) {
+        // Modo 2D simples
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, 800, 0, 600); // ajuste conforme sua resolução
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glDisable(GL_DEPTH_TEST);
+
+        const char* msg = (_currentState == GAME_OVER) ? "GAME OVER - Pressione ESC para sair"
+                                                       : "VOCE VENCEU! - Pressione ESC para sair";
+        glColor3f(1,1,1);
+        drawCenteredBitmapText(msg, 200, 300); // posição simples
+
+        glEnable(GL_DEPTH_TEST);
+
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    }
 
     glutSwapBuffers();
 }
@@ -153,6 +190,16 @@ void Game::processInteraction() {
     if (closestObject) {
         if (closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
             closestObject->onClick(_gameStateManager);
+            // Verifica se é uma PuzzleDoor (puzzle de 3 portas)
+            /*if (auto* pz = dynamic_cast<PuzzleDoor*>(closestObject)) {
+                if (pz->isDeadly()) {
+                    _currentState = GAME_OVER;
+                    return; // não deixa continuar
+                }
+                if (pz->isWinning()) {
+                    _currentState = WIN;
+                    return;
+                }*/
 
             // --- LÓGICA DE TRANSIÇÃO COM VERIFICAÇÃO ---
             Door* door = dynamic_cast<Door*>(closestObject);

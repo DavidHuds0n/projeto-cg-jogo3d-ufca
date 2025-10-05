@@ -3,7 +3,7 @@
 
 Door::Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem)
     : InteractableObject(position),
-      _visual(PrimitiveShape::SPHERE, position, {0.5f, 0.25f, 0.0f}, {1.0f, 2.0f, 0.2f}),
+      _visual(PrimitiveShape::CUBE, position, {0.5f, 0.25f, 0.0f}, {1.0f, 2.0f, 0.2f}),
       _targetRoomIndex(targetRoomIndex),
       _spawnPosition(spawnPosition),
       _requiredItem(requiredItem)

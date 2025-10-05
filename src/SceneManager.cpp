@@ -3,14 +3,20 @@
 // Includes para todos os objetos que vamos criar nas salas
 #include "../include/Floor.h"
 #include "../include/Wall.h"
+#include "../include/PrimitiveObject.h"
+#include "../include/TestButton.h"
 #include "../include/Key.h"
 #include "../include/Door.h"
+#include "../include/PuzzleDoor.h"
+#include "../include/Sign.h"
 #include "../include/ControlPanel.h"
-#include "../include/TestButton.h"
-#include "../include/PrimitiveObject.h"
+#include "../include/Keypad.h"
+#include "../include/Room.h"
+#include "../include/InteractableObject.h"
 
 #include <cstddef>
 #include <iostream>
+
 
 SceneManager::SceneManager() {
     _currentRoomIndex = -1;
@@ -85,6 +91,12 @@ void SceneManager::init() {
 
         // Porta
         room3->addObject(new Door({0.0f, 1.0f, 4.5f}, 1, {0.0f, 1.6f, -6.0f}, ItemType::NENHUM));
+         // Porta para a Sala 4 (puzzle)
+        room3->addObject(new Door({0.0f, 1.0f, -4.5f}, /*targetRoomIndex=*/3,
+                                  /*spawnPos na sala 4:*/ {0.0f, 1.0f, 3.5f},
+                                  ItemType::CHAVE_SALA_1)); // ou outro item, se quiser exigir
+
+
 
         // --- OBJETOS DA SALA 3 ---
         room3->addObject(new ControlPanel({0.0f, 1.5f, 0.0f}));
@@ -93,9 +105,138 @@ void SceneManager::init() {
     }
     _rooms.push_back(room3);
 
+     // --- CRIACAO DA SALA 4 (PUZZLE) ---
+    Room* room4 = new Room();
+    {
+        room4->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
+        const float wallHeight = 4.0f;
+        const float roomSize   = 5.0f;
+        const int indexPuzzle5 = 4;
+        room4->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
+        room4->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
+        room4->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+        room4->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+
+        // Portas no fundo (z = -4.6f aprox). Cores:
+        // Azul (correta), Vermelha (errada), Amarela (errada)
+        Vector3f RED   = {0.85f, 0.10f, 0.10f};
+        Vector3f CYAN  = {0.1f, 0.5f, 1.0f};  // brilho “oceano/céu”
+        Vector3f AMBER = {1.00f, 0.72f, 0.12f};  // brilho “sol”
+        Vector3f LIME  = {0.45f, 0.95f, 0.35f};  // brilho “montanha/terra”
+
+        // Esquerda: errada (SOL)
+        room4->addObject(new PuzzleDoor(
+            {-3.0f, 1.0f, -4.6f},
+            //PuzzleDoor::Mode::Deadly,
+            RED,-1,
+            PuzzleDoor::Icon::Sun, AMBER
+        ));
+        // Centro: CORRETA (ONDA = oceano)
+        room4->addObject(new PuzzleDoor(
+            { 0.0f, 1.0f, -4.6f},
+            //PuzzleDoor::Mode::Winning,
+            RED,indexPuzzle5,
+            PuzzleDoor::Icon::Wave, CYAN
+        ));
+        // Direita: errada (MONTANHA)
+        room4->addObject(new PuzzleDoor(
+            { 3.0f, 1.0f, -4.6f},
+            //PuzzleDoor::Mode::Deadly,
+            RED,-1,
+            PuzzleDoor::Icon::Mountain, LIME
+        ));
+
+        // Placa (mesma charada do oceano)
+        room4->addObject(new Sign({0.0f, 2.75f, -4.25f},
+          "Mostro fogo ao entardecer, visto gelo em alguns lugares e guardo picos que quase ninguem ve. Quem sou eu?"));
+    }
+    _rooms.push_back(room4);
+
+      Room* room5 = new Room();
+    {
+        // Estrutura
+        room5->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
+        const float wallHeight = 4.0f;
+        const float roomSize   = 6.0f;
+        room5->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
+        room5->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
+        room5->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+        room5->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+
+        // Porta de Volta para Sala 4 (entrada)
+        room5->addObject(new Door({0.0f, 1.0f, 5.5f}, 3, {0.0f, 1.0f, -3.5f}, ItemType::NENHUM));
+
+        // Porta de Saída para Sala 6 (requer CHAVE_SALA_5)
+        room5->addObject(new Door({0.0f, 1.0f, -5.5f}, 5, {0.0f, 1.0f, 4.5f}, ItemType::CHAVE_SALA_5));
+
+        // --- OBJETOS DA SALA 5: O Puzzle de Anomalia (Teapots) ---
+        Vector3f TEAPOT_COLOR_NORMAL = {0.7f, 0.7f, 0.7f}; // Cinza-Claro Normal
+        Vector3f TEAPOT_COLOR_ANOMALY = {0.7f, 0.3f, 0.3f}; // Vermelho Sutil
+
+        // Crio 8 Teapots normais em círculo/quadrado
+        float teapot_y = 1.0f;
+        float radius = 3.5f;
+
+        // Posições em 4 cantos
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        // O Teapot de Canto Anormal (Cor diferente)
+        //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_ANOMALY));
+
+        // Posições no meio das paredes
+        //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  0.0f}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  0.0f}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+
+        // A Placa com a Dica
+        room5->addObject(new Sign({0.0f, 2.75f, -5.0f},
+          "Olhe atentamente para o que parece igual. A chave para o proximo passo esconde-se naquele que tem uma COR ou FORMA ligeiramente diferente."));
+
+        // O objeto que o jogador deve interagir para obter a chave
+        // Use um Keypad simples como "botão" do puzzle.
+        // Ele vai aparecer na localização do teapot de canto anormal
+        //room5->addObject(new Keypad({radius, 1.0f, radius}));
+
+        // A CHAVE_SALA_5 que o jogador obtém (escondida num item interativo)
+        // O KEYPAD (ou outro objeto interativo no local) deverá fornecer a chave
+        // quando a condição do puzzle for satisfeita (no seu código de lógica).
+        // Aqui apenas coloco um Keypad no local do teapot diferente.
+        // Se a chave for dropada, o jogador a pega.
+        room5->addObject(new Key({ radius, teapot_y,  radius}, ItemType::CHAVE_SALA_5, "",true)); // Posicionada em outro lugar para ser pega após a interacao
+    }
+    _rooms.push_back(room5);
+
+    // --- CRIAÇÃO DA SALA 6 (Saída) ---
+    Room* room6 = new Room();
+    {
+        // ... (Estrutura da Sala 6 - Sala Final ou próxima fase) ...
+        room6->addObject(new Floor({0.0f, 0.0f, 0.0f}, {5.0f, 5.0f}));
+        const float wallHeight = 5.0f;
+        const float roomSize = 2.5f;
+        room6->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
+        room6->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
+        room6->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
+        room6->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
+
+        room6->addObject(new Door({0.0f, 1.0f, 2.0f}, 4, {0.0f, 1.0f, -4.5f}, ItemType::NENHUM)); // Volta para Sala 5
+
+        room6->addObject(new Sign({0.0f, 2.75f, 0.0f}, "PARABENS! Voce escapou! (Fim da Demo)"));
+    }
+    _rooms.push_back(room6);
+
+
+
     // Início na Sala 1
     if (!_rooms.empty()) {
         _currentRoomIndex = 0;
+    }
+}
+
+void SceneManager::setActiveRoom(int index){
+    if(index>=0 && index<(int)_rooms.size()){
+        _activeRoom = index;
     }
 }
 

@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Vector.h"
 
-enum class PrimitiveShape { SPHERE, CONE, TORUS, TEAPOT };
+enum class PrimitiveShape { SPHERE, CONE, TORUS, TEAPOT,CUBE };
 
 class PrimitiveObject : public GameObject {
 public:

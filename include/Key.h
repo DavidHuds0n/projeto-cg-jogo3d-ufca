@@ -9,7 +9,7 @@
 class Key : public InteractableObject {
 public:
     // Construtor atualizado para receber um ItemType
-    Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired = "");
+    Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired = "", bool form = false);
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
