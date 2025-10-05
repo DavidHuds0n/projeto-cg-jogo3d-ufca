@@ -39,10 +39,10 @@ void SceneManager::init(Player& player) {
         const float wallHeight = 4.0f;
         const float roomSize   = 5.0f;
         const int indexPuzzle5 = 1;
-        room1->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
-        room1->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
-        room1->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
-        room1->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+        room1->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room1->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room1->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
+        room1->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
 
         // Portas no fundo (z = -4.6f aprox). Cores:
         // Azul (correta), Vermelha (errada), Amarela (errada)
@@ -85,10 +85,10 @@ void SceneManager::init(Player& player) {
         room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
         const float wallHeight = 4.0f;
         const float roomSize   = 6.0f;
-        room2->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
-        room2->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}));
-        room2->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
-        room2->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f}));
+        room2->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
+        room2->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
+        room2->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
+        room2->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
 
         // Porta de Volta para Sala 4 (entrada)
        // room2->addObject(new Door({0.0f, 1.0f, 5.5f}, 3, {0.0f, 1.0f, -3.5f}, ItemType::NENHUM));
@@ -142,10 +142,10 @@ void SceneManager::init(Player& player) {
         room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
         const float wallHeight = 5.0f;
         const float roomSize = 6.0f;
-        room3->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
-        room3->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}));
-        room3->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
-        room3->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
+        room3->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
+        room3->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
+        room3->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/images.jpg"));
+        room3->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/images.jpg"));
 
         //room3->addObject(new Door({0.0f, 1.0f, 2.0f}, 4, {0.0f, 1.0f, -4.5f}, ItemType::NENHUM)); // Volta para Sala 5
 
