@@ -8,8 +8,8 @@
 #include "../include/ControlPanel.h"
 #include "../include/TestButton.h"
 #include "../include/PrimitiveObject.h"
-#include "../include/MagicCube.h"
-#include "../include/MagicCubeManager.h"
+#include "../include/CubePuzzle.h"
+#include "../include/RotatingCube.h"
 #include <random>
 
 #include <cstddef>
@@ -17,7 +17,6 @@
 
 SceneManager::SceneManager() {
     _currentRoomIndex = -1;
-        _cubeManager = nullptr;
 }
 
 SceneManager::~SceneManager() {
@@ -29,14 +28,17 @@ SceneManager::~SceneManager() {
 
 void SceneManager::init() {
     // --- CRIA��O DA SALA 1 ---
+
     Room* room1 = new Room();
     {
-        _cubeManager = new MagicCubeManager(3, 3, {0.0f, 1.0f, 0.0f}, 2.0f, 1.0f);
-
-        // Após criar o _cubeManager em SceneManager::init():
-        for (int i = 0; i < _cubeManager->getRows(); ++i)
-            for (int j = 0; j < _cubeManager->getCols(); ++j)
-                room1->addObject(_cubeManager->getCube(i, j));
+        // Cria o puzzle dos cubos rotativos (3x3)
+        CubePuzzle* puzzle = new CubePuzzle(3, 3, {0.0f, 0.5f, 0.0f}, 2.0f, 1.0f, PuzzleID::Sala_Cubos);
+        room1->addObject(puzzle); // Para update/render
+        // Adiciona todos os RotatingCubes para raycast/interação
+        const auto& cubes = puzzle->getCubes();
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                room1->addObject(cubes[i][j]);
 
         // Estrutura
         room1->addObject(new Floor({0.0f, 0.0f, 0.0f}, {20.0f, 20.0f}));
@@ -47,11 +49,10 @@ void SceneManager::init() {
         room1->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
         room1->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}));
 
-        // Porta para a Sala 2 (requer a CHAVE_SALA_1)
-        room1->addObject(new Door({0.0f, 1.0f, -9.5f}, 1, {0.0f, 1.6f, 6.5f}, ItemType::CHAVE_SALA_1));
+        // Porta para a Sala 2 (requer o puzzle dos cubos resolvido)
+        room1->addObject(new Door({0.0f, 1.0f, -9.5f}, 1, {0.0f, 1.6f, 6.5f}, PuzzleID::Sala_Cubos));
 
         // --- OBJETOS DA SALA 1 ---
-
     }
     _rooms.push_back(room1);
 
@@ -116,23 +117,13 @@ void SceneManager::switchToRoom(int roomIndex) {
 void SceneManager::update(float deltaTime, GameStateManager& gameStateManager) {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->update(deltaTime, gameStateManager);
-        // Atualiza cubos do MagicCubeManager manualmente na sala 1
-        if (_currentRoomIndex == 0 && _cubeManager) {
-            for (int i = 0; i < _cubeManager->getRows(); ++i)
-                for (int j = 0; j < _cubeManager->getCols(); ++j)
-                    _cubeManager->getCube(i, j)->update(deltaTime, gameStateManager);
-        }
+        // (Removido: atualização manual de MagicCubeManager)
     }
 }
 void SceneManager::render() {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->render();
-        // Renderiza cubos do MagicCubeManager manualmente na sala 1
-        if (_currentRoomIndex == 0 && _cubeManager) {
-            for (int i = 0; i < _cubeManager->getRows(); ++i)
-                for (int j = 0; j < _cubeManager->getCols(); ++j)
-                    _cubeManager->getCube(i, j)->render();
-        }
+        // (Removido: render manual de MagicCubeManager)
     }
 }
 std::vector<InteractableObject*>& SceneManager::getInteractableObjects() {

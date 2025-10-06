@@ -4,7 +4,6 @@
 #include <vector>
 #include "Room.h"
 #include "InteractableObject.h"
-#include "MagicCubeManager.h"
 
 /**
  * @file SceneManager.h
@@ -53,7 +52,6 @@ private:
     std::vector<Room*> _rooms;
     // Índice que aponta para a sala atualmente ativa no vetor _rooms.
     int _currentRoomIndex;
-    MagicCubeManager* _cubeManager;
 };
 
 #endif // SCENEMANAGER_H
