@@ -9,7 +9,7 @@ PrimitiveObject::PrimitiveObject(PrimitiveShape shape, const Vector3f& position,
 }
 
 void PrimitiveObject::update(float deltaTime, GameStateManager& gameStateManager) {
-    // Objetos de teste são estáticos.
+    // Objetos de teste sï¿½o estï¿½ticos.
 }
 
 void PrimitiveObject::render() {
@@ -37,12 +37,15 @@ void PrimitiveObject::render() {
         case PrimitiveShape::TEAPOT:
             glutSolidTeapot(1.0);
             break;
+        case PrimitiveShape::CUBE:
+            glutSolidCube(2.0); // Cubo de lado 2.0 (padrÃ£o)
+            break;
     }
     glPopMatrix();
 }
 
-// Método implementado
+// Mï¿½todo implementado
 BoundingBox PrimitiveObject::getBoundingBox() const {
-    // Retorna uma caixa "inválida" porque este objeto é apenas visual.
+    // Retorna uma caixa "invï¿½lida" porque este objeto ï¿½ apenas visual.
     return {{0,0,0}, {0,0,0}};
 }

@@ -4,13 +4,14 @@
 #include <vector>
 #include "Room.h"
 #include "InteractableObject.h"
+#include "MagicCubeManager.h"
 
 /**
  * @file SceneManager.h
- * @brief Define a classe SceneManager, responsável por gerenciar as salas (níveis) do jogo.
+ * @brief Define a classe SceneManager, responsï¿½vel por gerenciar as salas (nï¿½veis) do jogo.
  *
- * Esta classe controla qual sala está atualmente ativa, delegando as chamadas
- * de atualização (update) e renderização (render) para a sala correta.
+ * Esta classe controla qual sala estï¿½ atualmente ativa, delegando as chamadas
+ * de atualizaï¿½ï¿½o (update) e renderizaï¿½ï¿½o (render) para a sala correta.
  */
 class SceneManager {
 public:
@@ -21,19 +22,19 @@ public:
 
     /**
      * @brief Destrutor da classe SceneManager.
-     * @note Responsável por liberar a memória de todas as salas criadas.
+     * @note Responsï¿½vel por liberar a memï¿½ria de todas as salas criadas.
      */
     ~SceneManager();
 
     /**
      * @brief Inicializa o gerenciador de cenas.
-     * É aqui que as salas do jogo são criadas e configuradas.
+     * ï¿½ aqui que as salas do jogo sï¿½o criadas e configuradas.
      */
     void init();
 
     /**
-     * @brief Atualiza a lógica da sala atualmente ativa.
-     * @param deltaTime O tempo decorrido desde o último frame.
+     * @brief Atualiza a lï¿½gica da sala atualmente ativa.
+     * @param deltaTime O tempo decorrido desde o ï¿½ltimo frame.
      */
     // ATUALIZE A ASSINATURA AQUI
     void update(float deltaTime, GameStateManager& gameStateManager);
@@ -43,15 +44,16 @@ public:
      */
     void render();
 
-    std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
-    void switchToRoom(int roomIndex); // <-- ADICIONE ESTE MÉTODO
+    std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE Mï¿½TODO
+    void switchToRoom(int roomIndex); // <-- ADICIONE ESTE Mï¿½TODO
     const std::vector<GameObject*>& getCurrentRoomObjects() const;
 
 private:
     // Vetor que armazena ponteiros para todas as salas do jogo.
     std::vector<Room*> _rooms;
-    // Índice que aponta para a sala atualmente ativa no vetor _rooms.
+    // Ãndice que aponta para a sala atualmente ativa no vetor _rooms.
     int _currentRoomIndex;
+    MagicCubeManager* _cubeManager;
 };
 
 #endif // SCENEMANAGER_H
