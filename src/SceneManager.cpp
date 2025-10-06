@@ -97,7 +97,7 @@ void SceneManager::init(Player& player) {
         room2->addObject(new Door({0.0f, 1.0f, -5.5f}, 2, {0.0f, 1.0f, 4.5f}, ItemType::CHAVE_SALA_1));
 
         // --- OBJETOS DA SALA 5: O Puzzle de Anomalia (Teapots) ---
-        Vector3f TEAPOT_COLOR_NORMAL = {0.7f, 0.7f, 0.7f}; // Cinza-Claro Normal
+        Vector3f TEAPOT_COLOR_NORMAL = {0.4f, 0.4f, 0.4f}; // Cinza-Claro Normal
         Vector3f TEAPOT_COLOR_ANOMALY = {0.7f, 0.3f, 0.3f}; // Vermelho Sutil
 
         // Crio 8 Teapots normais em círculo/quadrado
@@ -105,17 +105,17 @@ void SceneManager::init(Player& player) {
         float radius = 3.5f;
 
         // Posições em 4 cantos
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y, -radius}, {1.0f, 0.8f, 0.4f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y, -radius}, {0.0f, 0.0f, 1.0f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  radius}, {0.4f, 0.7f, 0.5f}, TEAPOT_COLOR_NORMAL));
         // O Teapot de Canto Anormal (Cor diferente)
         //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_ANOMALY));
 
         // Posições no meio das paredes
         //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  0.0f}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  0.0f}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y,  radius}, {0.5f, 0.0f, 0.8f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  0.0f}, {0.0f, 0.9f, 0.3f}, TEAPOT_COLOR_NORMAL));
+        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  0.0f}, {0.8f, 0.4f, 0.3f}, TEAPOT_COLOR_NORMAL));
 
         // A Placa com a Dica
         room2->addObject(new Sign({0.0f, 2.75f, -5.0f},
@@ -131,7 +131,11 @@ void SceneManager::init(Player& player) {
         // quando a condição do puzzle for satisfeita (no seu código de lógica).
         // Aqui apenas coloco um Keypad no local do teapot diferente.
         // Se a chave for dropada, o jogador a pega.
-        room2->addObject(new Key({ radius, teapot_y,  radius}, ItemType::CHAVE_SALA_1, "",true)); // Posicionada em outro lugar para ser pega após a interacao
+        room2->addObject(new Key({ radius, teapot_y, radius },
+                         ItemType::CHAVE_SALA_1,
+                         "",
+                         true,{0.0f, 0.0f, 1.0f}
+                         )); // Posicionada em outro lugar para ser pega após a interacao
     }
     _rooms.push_back(room2);
 
@@ -140,7 +144,7 @@ void SceneManager::init(Player& player) {
     {
         // ... (Estrutura da Sala 6 - Sala Final ou próxima fase) ...
         room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
-        const float wallHeight = 5.0f;
+        const float wallHeight = 4.0f;
         const float roomSize = 6.0f;
         room3->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
         room3->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
@@ -149,7 +153,7 @@ void SceneManager::init(Player& player) {
 
         //room3->addObject(new Door({0.0f, 1.0f, 2.0f}, 4, {0.0f, 1.0f, -4.5f}, ItemType::NENHUM)); // Volta para Sala 5
 
-        room3->addObject(new Sign({0.0f, 0.75f, -8.0f}, "PARABENS! Voce escapou! (Fim da Demo)"));
+        room3->addObject(new Sign({0.0f, 0.75f, -6.5f}, "PARABENS! Voce escapou! (Fim da Demo)"));
     }
     _rooms.push_back(room3);
 

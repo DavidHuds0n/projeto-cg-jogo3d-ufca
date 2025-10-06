@@ -9,7 +9,7 @@
 class Key : public InteractableObject {
 public:
     // Construtor atualizado para receber um ItemType
-    Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired = "", bool form = false);
+    Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired = "", bool form = false, const Vector3f& color = {1.0f, 0.9f, 0.8f});
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
@@ -24,6 +24,7 @@ private:
     std::string _puzzleIdRequired;
     bool _isVisible;
     ItemType _keyType; // Armazena o tipo desta chave
+    Vector3f _color;
 };
 
 #endif // KEY_H

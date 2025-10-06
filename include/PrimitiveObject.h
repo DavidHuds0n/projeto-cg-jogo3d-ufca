@@ -13,6 +13,7 @@ public:
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
     virtual BoundingBox getBoundingBox() const override;
+    void setColor(const Vector3f& c) {_color = c;}
 
 private:
     PrimitiveShape _shape;

@@ -95,6 +95,7 @@ void Game::init() {
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
+
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
     // --- ADICIONE ESTAS DUAS LINHAS AQUI ---
@@ -217,7 +218,7 @@ void Game::processInteraction() {
 
                     // Não vamos remover o item NENHUM do inventário
                     if (requiredItem != ItemType::NENHUM) {
-                       // _gameStateManager.removeItemFromInventory(requiredItem); // Descomente se quiser que a chave seja consumida
+                       // gameStateManager.removeItemFromInventory(requiredItem); // Descomente se quiser que a chave seja consumida
                     }
 
                 } else {
