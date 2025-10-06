@@ -31,13 +31,13 @@ void SceneManager::init() {
 
     Room* room1 = new Room();
     {
-        // Cria o puzzle dos cubos rotativos (3x3)
-        CubePuzzle* puzzle = new CubePuzzle(3, 3, {0.0f, 0.5f, 0.0f}, 2.0f, 1.0f, PuzzleID::Sala_Cubos);
+        // Cria o puzzle dos cubos rotativos (2x2)
+        CubePuzzle* puzzle = new CubePuzzle(2, 2, {0.0f, 0.5f, 0.0f}, 2.0f, 1.0f, PuzzleID::Sala_Cubos);
         room1->addObject(puzzle); // Para update/render
         // Adiciona todos os RotatingCubes para raycast/interação
         const auto& cubes = puzzle->getCubes();
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
+        for (int i = 0; i < 2; ++i)
+            for (int j = 0; j < 2; ++j)
                 room1->addObject(cubes[i][j]);
 
         // Estrutura

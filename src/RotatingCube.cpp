@@ -3,27 +3,35 @@
 #include <GL/freeglut.h>
 #include <cmath>
 
+
 RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
     : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
     // Estado inicial aleatório
     _rotationState = rand() % 4;
     _currentAngle = _rotationState * 90.0f;
     _targetAngle = _currentAngle;
+    _currentPosition = position;
+    _targetPosition = position;
 }
 
 void RotatingCube::update(float deltaTime, GameStateManager&) {
-    // Animação suave
+    // Animação suave de rotação
     if (std::abs(_currentAngle - _targetAngle) > 0.1f) {
         float diff = _targetAngle - _currentAngle;
         _currentAngle += diff * std::min(1.0f, deltaTime * 10.0f);
     } else {
         _currentAngle = _targetAngle;
     }
+    // Animação suave de movimento (LERP)
+    float speed = 0.1f; // quanto maior, mais rápido
+    _currentPosition.x += (_targetPosition.x - _currentPosition.x) * std::min(1.0f, deltaTime * speed);
+    _currentPosition.y += (_targetPosition.y - _currentPosition.y) * std::min(1.0f, deltaTime * speed);
+    _currentPosition.z += (_targetPosition.z - _currentPosition.z) * std::min(1.0f, deltaTime * speed);
 }
 
 void RotatingCube::render() {
     glPushMatrix();
-    glTranslatef(_position.x, _position.y, _position.z);
+    glTranslatef(_currentPosition.x, _currentPosition.y, _currentPosition.z);
     glRotatef(_currentAngle, 0, 1, 0);
     glScalef(_size, _size, _size);
 
@@ -89,6 +97,7 @@ void RotatingCube::onClick(GameStateManager&) {
 void RotatingCube::rotate() {
     _rotationState = (_rotationState + 1) % 4;
     _targetAngle = _rotationState * 90.0f;
+    // Apenas animação suave de rotação, sem alterar posição
 }
 
 BoundingBox RotatingCube::getBoundingBox() const {

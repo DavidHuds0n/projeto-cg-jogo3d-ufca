@@ -1,3 +1,8 @@
+#include "../include/CubePuzzle.h"
+#include "../include/GameStateManager.h"
+#include "../include/GameObject.h"
+#include <iostream>
+
 BoundingBox CubePuzzle::getBoundingBox() const {
     // Calcula o menor bounding box que engloba todos os cubos
     if (_cubes.empty() || _cubes[0].empty()) return BoundingBox{};
@@ -15,9 +20,7 @@ BoundingBox CubePuzzle::getBoundingBox() const {
     }
     return box;
 }
-#include "../include/CubePuzzle.h"
-#include "../include/GameStateManager.h"
-#include <iostream>
+
 
 CubePuzzle::CubePuzzle(int rows, int cols, const Vector3f& startPos, float spacing, float cubeSize, const std::string& puzzleId)
     : _rows(rows), _cols(cols), _puzzleId(puzzleId) {
@@ -71,6 +74,12 @@ void CubePuzzle::checkSolution(GameStateManager& gameStateManager) {
     if (!_solved) {
         gameStateManager.setPuzzleState(_puzzleId, true);
         std::cout << "Puzzle dos cubos resolvido!" << std::endl;
+        // Exemplo: animação - todos os cubos sobem
+        for (auto& row : _cubes)
+            for (auto* cube : row) {
+                Vector3f pos = cube->getPosition();
+                cube->moveTo({pos.x, pos.y + 2.0f, pos.z});
+            }
         _solved = true;
     }
 }
