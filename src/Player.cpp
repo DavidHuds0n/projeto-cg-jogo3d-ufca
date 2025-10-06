@@ -16,7 +16,7 @@ bool checkCollision(const BoundingBox& a, const BoundingBox& b) {
 Player::Player() {
     // Define a posição inicial do jogador e seus atributos de jogabilidade.
     // ATUALIZAÇÃO AQUI: Aumentamos a altura do jogador.
-    _position = {0.0f, 1.6f, 5.0f}; // Posição inicial (x, y, z) - Y alterado de 1.0 para 1.6
+    _position = {0.0f, 1.6f, 3.0f}; // Posição inicial (x, y, z) - Y alterado de 1.0 para 1.6
 
     _movementSpeed = Config::PLAYER_SPEED;
     _collisionRadius = Config::PLAYER_COLLISION_RADIUS;

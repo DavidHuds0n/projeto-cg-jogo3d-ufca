@@ -4,6 +4,7 @@
 #include <vector>
 #include "Room.h"
 #include "InteractableObject.h"
+#include "Player.h"
 
 /**
  * @file SceneManager.h
@@ -12,6 +13,9 @@
  * Esta classe controla qual sala está atualmente ativa, delegando as chamadas
  * de atualização (update) e renderização (render) para a sala correta.
  */
+class Room;
+class InteractableObject;
+class Player;
 class SceneManager {
 public:
     /**
@@ -29,7 +33,7 @@ public:
      * @brief Inicializa o gerenciador de cenas.
      * É aqui que as salas do jogo são criadas e configuradas.
      */
-    void init();
+    void init(Player& player);
 
     /**
      * @brief Atualiza a lógica da sala atualmente ativa.
@@ -44,14 +48,19 @@ public:
     void render();
 
     std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
-    void switchToRoom(int roomIndex); // <-- ADICIONE ESTE MÉTODO
+    void switchToRoom(int roomIndex,Player& player); // <-- ADICIONE ESTE MÉTODO
     const std::vector<GameObject*>& getCurrentRoomObjects() const;
+
+    void setActiveRoom(int index);
+    int getActiveRoom() const{return _activeRoom;}
 
 private:
     // Vetor que armazena ponteiros para todas as salas do jogo.
     std::vector<Room*> _rooms;
     // Índice que aponta para a sala atualmente ativa no vetor _rooms.
     int _currentRoomIndex;
+    int _activeRoom = 0;
+    Player* _player;
 };
 
 #endif // SCENEMANAGER_H

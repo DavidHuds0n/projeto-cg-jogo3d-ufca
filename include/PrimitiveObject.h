@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "Vector.h"
 
-enum class PrimitiveShape { SPHERE, CONE, TORUS, TEAPOT };
+enum class PrimitiveShape { SPHERE, CONE, TORUS, TEAPOT,CUBE };
 
 class PrimitiveObject : public GameObject {
 public:
@@ -13,6 +13,7 @@ public:
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
     virtual BoundingBox getBoundingBox() const override;
+    void setColor(const Vector3f& c) {_color = c;}
 
 private:
     PrimitiveShape _shape;

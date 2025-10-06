@@ -1,15 +1,23 @@
 #include "../include/Key.h"
 #include <iostream>
 
-Key::Key(const Vector3f& position, ItemType keyType, const std::string& puzzleIdRequired)
+Key::Key(const Vector3f& position,
+         ItemType keyType,
+         const std::string& puzzleIdRequired,
+         bool form,
+         const Vector3f& color) // <<-- cor recebida
     : InteractableObject(position),
-      _visual(PrimitiveShape::CONE, position, {0.9f, 0.9f, 0.1f}, {0.4f, 0.4f, 0.4f}), // Cor dourada
+      _visual(form ? PrimitiveShape::TEAPOT : PrimitiveShape::CONE,
+              position,
+              color,
+              {0.4f, 0.4f, 0.4f}),
       _puzzleIdRequired(puzzleIdRequired),
       _keyType(keyType)
 {
+    _color = color;
+    _visual.setColor(color);
     _collisionRadius = 0.5f;
     _isCollected = false;
-    // Se não depende de puzzle, já começa visível
     _isVisible = puzzleIdRequired.empty();
     setInteractable(puzzleIdRequired.empty());
 }
@@ -34,6 +42,7 @@ void Key::onClick(GameStateManager& gameStateManager) {
     std::cout << "*** Chave Coletada! ***" << std::endl;
     _isCollected = true;
     setInteractable(false);
+
     // Adiciona o TIPO CORRETO de chave ao inventário
     gameStateManager.addItemToInventory(_keyType);
 }

@@ -1,6 +1,7 @@
 #include "../include/GameStateManager.h"
 #include <algorithm> // Necessário para std::find e std::remove
 #include <iostream>  // Para mensagens de depuração no console
+#include "../include/SceneManager.h"
 
 GameStateManager::GameStateManager() {
     // Inicializa o estado de todos os puzzles como "não resolvidos"
@@ -100,3 +101,9 @@ bool GameStateManager::isKeypadActive() const {
     return _isKeypadActive;
 }
 
+void GameStateManager::processPending(SceneManager& sm, Player& player){
+    if (_pendinRoom >= 0) {
+        sm.switchToRoom(_pendinRoom, player); // passa o player
+        _pendinRoom = -1;
+    }
+}

@@ -1,19 +1,30 @@
 /**
  * @file Game.cpp
- * @brief ImplementaÁ„o da classe principal Game.
+ * @brief Implementa√ß√£o da classe principal Game.
  */
 #include "../include/Game.h"
 #include "../include/Config.h"
 #include "../include/Ray.h"
 #include "../include/InteractableObject.h"
-#include "../include/Door.h" // IncluÌdo para a lÛgica de transiÁ„o de sala
+#include "../include/PuzzleDoor.h"
+#include "../include/Door.h" // Inclu√≠do para a l√≥gica de transi√ß√£o de sala
+#include "../include/SceneManager.h"
+#include "../include/GameStateManager.h"
 #include <GL/freeglut.h>
 #include <iostream>
 #include <cmath>
 #include <limits>
 #include <vector>
 
-// --- FUN«’ES AUXILIARES DE RAY CASTING ---
+// --- FUN√á√ïES AUXILIARES EST√ÅTICAS ---
+static void drawCenteredBitmapText(const char* msg, float x, float y) {
+    glRasterPos2f(x, y);
+    for (const char* p = msg; *p; ++p) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *p);
+    }
+}
+
+// --- FUN√á√ïES AUXILIARES DE RAY CASTING ---
 
 /**
  * @brief Calcula um raio 3D a partir das coordenadas 2D da tela.
@@ -53,7 +64,7 @@ Ray calculateMouseRay(int mouseX, int mouseY, Player& player) {
 
 /**
  * @brief Verifica se um raio intercepta uma esfera.
- * @return A dist‚ncia da origem do raio atÈ a interseÁ„o, ou um valor negativo se n„o houver.
+ * @return A dist√¢ncia da origem do raio at√© a interse√ß√£o, ou um valor negativo se n√£o houver.
  */
 float rayIntersectsSphere(const Ray& ray, const Vector3f& sphereCenter, float sphereRadius) {
     Vector3f oc = {
@@ -73,7 +84,7 @@ float rayIntersectsSphere(const Ray& ray, const Vector3f& sphereCenter, float sp
     }
 }
 
-// --- IMPLEMENTA«√O DA CLASSE GAME ---
+// --- IMPLEMENTA√á√ÉO DA CLASSE GAME ---
 
 Game::Game() {
     _currentState = PLAYING;
@@ -84,12 +95,13 @@ void Game::init() {
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
+
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
     // --- ADICIONE ESTAS DUAS LINHAS AQUI ---
     // Habilita o descarte de faces
     glEnable(GL_CULL_FACE);
-    // Especifica que as faces de TR¡S (GL_BACK) devem ser descartadas
+    // Especifica que as faces de TR√ÅS (GL_BACK) devem ser descartadas
     glCullFace(GL_BACK);
     // -----------------------------------------
 
@@ -101,7 +113,7 @@ void Game::init() {
     glLoadIdentity();
 
     _lightManager.init();
-    _sceneManager.init();
+    _sceneManager.init(_player);
 }
 
 void Game::update(float deltaTime) {
@@ -111,7 +123,7 @@ void Game::update(float deltaTime) {
 
         // PASSE O GAMESTATEMANAGER AQUI
         _sceneManager.update(deltaTime, _gameStateManager);
-
+        _gameStateManager.processPending(_sceneManager,_player);
         Vector3f currentColor = _gameStateManager.getCurrentFlashlightColor();
         _lightManager.setFlashlightColor(currentColor);
     }
@@ -126,6 +138,32 @@ void Game::render() {
     _lightManager.updateFlashlight(_player.getCamera().getPosition(), _player.getCamera().getFrontVector());
 
     _sceneManager.render();
+
+    // Overlay para estados finais
+    if (_currentState != PLAYING) {
+        // Modo 2D simples
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, 800, 0, 600); // ajuste conforme sua resolu√ß√£o
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glDisable(GL_DEPTH_TEST);
+
+        const char* msg = (_currentState == GAME_OVER) ? "GAME OVER - Pressione ESC para sair"
+                                                       : "VOCE VENCEU! - Pressione ESC para sair";
+        glColor3f(1,1,1);
+        drawCenteredBitmapText(msg, 200, 300); // posi√ß√£o simples
+
+        glEnable(GL_DEPTH_TEST);
+
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    }
 
     glutSwapBuffers();
 }
@@ -153,30 +191,63 @@ void Game::processInteraction() {
     if (closestObject) {
         if (closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
             closestObject->onClick(_gameStateManager);
-
-            // --- L”GICA DE TRANSI«√O COM VERIFICA«√O ---
+            // Verifica se √© uma PuzzleDoor (puzzle de 3 portas)
+            /*if (auto* pz = dynamic_cast<PuzzleDoor*>(closestObject)) {
+                if (pz->isDeadly()) {
+                    _currentState = GAME_OVER;
+                    return; // n√£o deixa continuar
+                }
+                if (pz->isWinning()) {
+                    _currentState = WIN;
+                    return;
+                }*/
             Door* door = dynamic_cast<Door*>(closestObject);
             if (door) {
-                ItemType requiredItem = door->getRequiredItem();
+                // Pega a lista de chaves necess√°rias
+                const std::vector<ItemType>& requiredItem = door->getRequiredItems();
 
-                // --- L”GICA ATUALIZADA AQUI ---
-                // A porta abre se n„o requer item OU se o jogador tem o item.
-                if (requiredItem == ItemType::NENHUM || _gameStateManager.playerHasItem(requiredItem)) {
-
-                    std::cout << "Porta aberta!" << std::endl;
+                // Se n√£o precisa de chave ‚Üí abre normalmente
+                if (requiredItem.empty()) {
+                    std::cout << "Porta livre! Entrando na pr√≥xima sala..." << std::endl;
                     int targetRoom = door->getTargetRoomIndex();
-                    _sceneManager.switchToRoom(targetRoom);
+                    _sceneManager.switchToRoom(targetRoom, _player);
+                    _player.setPosition(door->getSpawnPosition());
+                    return;
+                }
+
+                // Verifica se o jogador tem TODAS as chaves
+                bool allKeys = true;
+                for (auto& item : requiredItem) {
+                    if (!_gameStateManager.playerHasItem(item)) {
+                        allKeys = false;
+                        break;
+                    }
+                }
+
+                if (allKeys) {
+                    std::cout << "*** Porta aberta! Todas as chaves foram usadas. ***" << std::endl;
+                    int targetRoom = door->getTargetRoomIndex();
+                    _sceneManager.switchToRoom(targetRoom, _player);
                     _player.setPosition(door->getSpawnPosition());
 
-                    // N„o vamos remover o item NENHUM do invent·rio
-                    if (requiredItem != ItemType::NENHUM) {
-                       // _gameStateManager.removeItemFromInventory(requiredItem); // Descomente se quiser que a chave seja consumida
+                    // Se quiser consumir as chaves ao usar:
+                    /*
+                    for (auto& item : requiredItems) {
+                        _gameStateManager.removeItemFromInventory(item);
                     }
-
+                    */
                 } else {
-                    std::cout << "A porta esta trancada. Voce precisa de um item." << std::endl;
+                    std::cout << "A porta est√° trancada. Voc√™ precisa de todas as chaves necess√°rias." << std::endl;
+                    }
                 }
-            }
+                    // N√£o vamos remover o item NENHUM do invent√°rio
+                    /*if (requiredItem != ItemType::NENHUM) {
+                       // gameStateManager.removeItemFromInventory(requiredItem); // Descomente se quiser que a chave seja consumida
+                    }*/
+
+                /*} else {
+                    std::cout << "A porta esta trancada. Voce precisa de um item." << std::endl;
+                }*/
         } else {
             std::cout << "Objeto encontrado, mas esta longe demais para interagir!" << std::endl;
         }
@@ -187,17 +258,17 @@ void Game::processInteraction() {
 // --- Processamento de Entrada ---
 
 void Game::processKeyDown(unsigned char key, int x, int y) {
-    // Se o keypad est· ativo, a entrada do teclado È para o cÛdigo
+    // Se o keypad est√° ativo, a entrada do teclado √© para o c√≥digo
     if (_gameStateManager.isKeypadActive()) {
         if (key >= '0' && key <= '9') {
             _gameStateManager.appendToKeypadInput(key);
-            // Se o cÛdigo tem 3 dÌgitos, verifica
+            // Se o c√≥digo tem 3 d√≠gitos, verifica
             if (_gameStateManager.getKeypadInput().length() == 3) {
-                if (_gameStateManager.checkKeypadCode("742")) { // O cÛdigo correto!
+                if (_gameStateManager.checkKeypadCode("742")) { // O c√≥digo correto!
                     _gameStateManager.setPuzzleState(PuzzleID::Sala1_CodigoCaixa, true);
                     std::cout << "CAIXA DESTRANCADA!" << std::endl;
                 }
-                _gameStateManager.setActiveKeypad(false); // Desativa o keypad apÛs a tentativa
+                _gameStateManager.setActiveKeypad(false); // Desativa o keypad ap√≥s a tentativa
             }
         } else if (key == 27 || key == 'e') { // Permite sair do modo keypad com ESC ou E
             _gameStateManager.setActiveKeypad(false);
@@ -206,7 +277,7 @@ void Game::processKeyDown(unsigned char key, int x, int y) {
         return; // Impede que o jogador ande enquanto digita
     }
 
-    // LÛgica normal de input se o keypad n„o estiver ativo
+    // L√≥gica normal de input se o keypad n√£o estiver ativo
     key = tolower(key);
     if (key == 27) {
         glutLeaveMainLoop();

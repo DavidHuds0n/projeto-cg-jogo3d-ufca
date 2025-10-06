@@ -3,7 +3,17 @@
 
 Door::Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem)
     : InteractableObject(position),
-      _visual(PrimitiveShape::SPHERE, position, {0.5f, 0.25f, 0.0f}, {1.0f, 2.0f, 0.2f}),
+      _visual(PrimitiveShape::CUBE, position, {0.5f, 0.25f, 0.0f}, {1.0f, 2.0f, 0.2f}),
+      _targetRoomIndex(targetRoomIndex),
+      _spawnPosition(spawnPosition),
+      _requiredItem({ requiredItem }) // coloca 1 item dentro do vetor
+{
+    _collisionRadius = 1.5f;
+}
+
+Door::Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, const std::vector<ItemType>& requiredItem)
+    : InteractableObject(position),
+      _visual(PrimitiveShape::CUBE, position, {0.5f, 0.25f, 0.0f}, {1.0f, 2.0f, 0.2f}),
       _targetRoomIndex(targetRoomIndex),
       _spawnPosition(spawnPosition),
       _requiredItem(requiredItem)
@@ -21,6 +31,7 @@ void Door::render() {
 
 void Door::onClick(GameStateManager& gameStateManager) {
     std::cout << "Porta interagida!" << std::endl;
+
     // A lógica de verificar a chave e mudar de sala fica no Game.cpp
 }
 
@@ -36,7 +47,7 @@ const Vector3f& Door::getSpawnPosition() const {
     return _spawnPosition;
 }
 
-ItemType Door::getRequiredItem() const {
+const std::vector<ItemType>& Door::getRequiredItems() const {
     return _requiredItem;
 }
 

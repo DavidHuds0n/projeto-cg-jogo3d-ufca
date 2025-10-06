@@ -4,6 +4,7 @@
  */
 #include "../include/Room.h"
 #include "../include/InteractableObject.h"
+#include <algorithm>
 
 Room::Room() {
     // O construtor está vazio por enquanto. No futuro, ele poderia receber um

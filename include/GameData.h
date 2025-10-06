@@ -10,6 +10,8 @@ enum class ItemType {
     // Chaves para progredir entre as salas
     CHAVE_SALA_1,         // Abre a porta da Sala 1 para a 2
     CHAVE_SALA_2,         // Abre a porta da Sala 2 para a 3
+    CHAVE_SALA_3,
+    CHAVE_SALA_4,
 
     // Itens de puzzle específicos
     FORMA_ESFERA,
