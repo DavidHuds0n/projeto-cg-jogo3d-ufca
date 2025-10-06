@@ -28,8 +28,15 @@ void PrimitiveObject::render() {
             glutSolidSphere(1.0, 32, 32);
             break;
         case PrimitiveShape::CONE:
+            glDisable(GL_TEXTURE_2D);
+            glColor3f(_color.x, _color.y, _color.z);
+
+            glPushMatrix();
+            glTranslatef(_position.x, _position.y, _position.z);
+            glScalef(_scale.x, _scale.y, _scale.z);
             glRotatef(-90, 1.0f, 0.0f, 0.0f);
-            glutSolidCone(1.0, 2.0, 32, 32);
+            glutSolidCone(2.0, 4.0, 32, 32);
+            glPopMatrix();
             break;
         case PrimitiveShape::TORUS:
             glutSolidTorus(0.5, 1.0, 32, 32);

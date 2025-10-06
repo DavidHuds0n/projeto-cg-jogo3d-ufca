@@ -9,8 +9,9 @@
 class Door : public InteractableObject {
 public:
     // Construtor que pode aceitar um item necessário para abrir
-    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem = ItemType::CHAVE_SALA_1); // Usando um placeholder
-
+    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, const std::vector<ItemType>& requiredItem = {}); // Usando um placeholder
+    // Construtor para uma única chave
+    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem = ItemType::CHAVE_SALA_1);
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
     virtual void onClick(GameStateManager& gameStateManager) override;
@@ -22,13 +23,13 @@ public:
 
     // --- ADICIONE ESTA LINHA ---
     virtual BoundingBox getBoundingBox() const override;
-
+    const std::vector<ItemType>& getRequiredItems() const;
 private:
     PrimitiveObject _visual;
     float _collisionRadius;
     int _targetRoomIndex;
     Vector3f _spawnPosition;
-    ItemType _requiredItem;
+    std::vector<ItemType> _requiredItem;
 };
 
 #endif // DOOR_H
