@@ -8,7 +8,6 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/Jogo3D" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="C:/MinGW/bin" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -42,9 +41,13 @@
 			<Add library="gdi32" />
 			<Add directory="C:/MinGW/lib" />
 		</Linker>
+		<Unit filename="Textures/1124.jpg" />
+		<Unit filename="Textures/628.jpg" />
+		<Unit filename="Textures/images.jpg" />
 		<Unit filename="include/CollectableShape.h" />
 		<Unit filename="include/Config.h" />
 		<Unit filename="include/ControlPanel.h" />
+		<Unit filename="include/CubePuzzle.h" />
 		<Unit filename="include/Door.h" />
 		<Unit filename="include/FPSCamera.h" />
 		<Unit filename="include/Floor.h" />
@@ -59,17 +62,23 @@
 		<Unit filename="include/MovableVase.h" />
 		<Unit filename="include/Player.h" />
 		<Unit filename="include/PrimitiveObject.h" />
+		<Unit filename="include/PuzzleDoor.h" />
 		<Unit filename="include/Ray.h" />
 		<Unit filename="include/Room.h" />
+		<Unit filename="include/RotatingCube.h" />
 		<Unit filename="include/SceneManager.h" />
 		<Unit filename="include/SequenceButton.h" />
 		<Unit filename="include/ShapeSocket.h" />
+		<Unit filename="include/Sign.h" />
 		<Unit filename="include/TestButton.h" />
+		<Unit filename="include/TextureManager.h" />
 		<Unit filename="include/Vector.h" />
 		<Unit filename="include/Wall.h" />
+		<Unit filename="include/stb_image.h" />
 		<Unit filename="res/levels/maze.txt" />
 		<Unit filename="src/CollectableShape.cpp" />
 		<Unit filename="src/ControlPanel.cpp" />
+		<Unit filename="src/CubePuzzle.cpp" />
 		<Unit filename="src/Door.cpp" />
 		<Unit filename="src/FPSCamera.cpp" />
 		<Unit filename="src/Floor.cpp" />
@@ -81,11 +90,15 @@
 		<Unit filename="src/MovableVase.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/PrimitiveObject.cpp" />
+		<Unit filename="src/PuzzleDoor.cpp" />
 		<Unit filename="src/Room.cpp" />
+		<Unit filename="src/RotatingCube.cpp" />
 		<Unit filename="src/SceneManager.cpp" />
 		<Unit filename="src/SequenceButton.cpp" />
 		<Unit filename="src/ShapeSocket.cpp" />
+		<Unit filename="src/Sign.cpp" />
 		<Unit filename="src/TestButton.cpp" />
+		<Unit filename="src/TextureManager.cpp" />
 		<Unit filename="src/Wall.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>

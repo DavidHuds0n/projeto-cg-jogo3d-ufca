@@ -1,86 +1,107 @@
 #include "../include/Wall.h"
+#include "../include/TextureManager.h"
 #include <GL/freeglut.h>
+#include <iostream>
 
-Wall::Wall(const Vector3f& position, const Vector3f& size) {
-    _position = position;
-    _size = size;
+Wall::Wall(const Vector3f& position, const Vector3f& size, const std::string& textureFile)
+    : _position(position), _size(size)
+{
+    _textureID = TextureManager::loadTexture(textureFile);
 }
+
+Wall::Wall(const Vector3f& position, const Vector3f& size)
+    : Wall(position, size, "") {}
 
 void Wall::update(float deltaTime, GameStateManager& gameStateManager) {
-    // Paredes são estáticas.
+    // Paredes são estáticas
 }
 
+// --- FUNÇÃO RENDER ATUALIZADA ---
 void Wall::render() {
-    // Define o material da parede.
-    GLfloat wall_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat wall_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, wall_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, wall_specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, 128.0f);
+    // Define a cor base da parede como branco.
+    // Com GL_COLOR_MATERIAL ativo, a iluminação será calculada sobre esta cor
+    // e depois multiplicada pela textura. Branco é a cor neutra ideal.
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    if (_textureID) {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, _textureID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    } else {
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    // REMOVEMOS os glMaterialfv daqui, pois agora usamos glColorMaterial.
 
     glPushMatrix();
+    glTranslatef(_position.x, _position.y, _position.z);
 
-    bool isHorizontal = (_size.x > _size.z);
+    float hx = _size.x / 2.0f;
+    float hy = _size.y / 2.0f;
+    float hz = _size.z / 2.0f;
 
-    // Define a normal correta para a iluminação
-    if (isHorizontal) {
-        if (_position.z > 0) glNormal3f(0.0f, 0.0f, -1.0f);
-        else glNormal3f(0.0f, 0.0f, 1.0f);
-    } else {
-        if (_position.x > 0) glNormal3f(-1.0f, 0.0f, 0.0f);
-        else glNormal3f(1.0f, 0.0f, 0.0f);
-    }
+    // --- CORREÇÃO DA ESCALA DA TEXTURA ---
+    // Este valor controla o tamanho da textura.
+    // Números maiores = textura menor e mais repetida.
+    // Números menores = textura maior e menos repetida.
+    float textureScale = 4.0f;
 
-    int divisions = 70;
-    float halfWidth = _size.x / 2.0f;
-    float halfHeight = _size.y / 2.0f;
-    float halfDepth = _size.z / 2.0f;
-    float startX = _position.x - halfWidth;
-    float startY = _position.y - halfHeight;
-    float startZ = _position.z - halfDepth;
-    float segmentWidth = _size.x / divisions;
-    float segmentHeight = _size.y / divisions;
-    float segmentDepth = _size.z / divisions;
+    float u_repeat_x = _size.x / textureScale;
+    float v_repeat_y = _size.y / textureScale;
+    float w_repeat_z = _size.z / textureScale;
 
     glBegin(GL_QUADS);
-    for (int i = 0; i < divisions; ++i) {
-        for (int j = 0; j < divisions; ++j) {
-            if (isHorizontal) { // Parede orientada no eixo X (frente/fundo)
-                float currentX = startX + i * segmentWidth;
-                float currentY = startY + j * segmentHeight;
+        // Face da frente (+Z)
+        glNormal3f(0.0f, 0.0f, 1.0f);
+        glTexCoord2f(0, 0);          glVertex3f(-hx, -hy, hz);
+        glTexCoord2f(u_repeat_x, 0); glVertex3f( hx, -hy, hz);
+        glTexCoord2f(u_repeat_x, v_repeat_y); glVertex3f( hx,  hy, hz);
+        glTexCoord2f(0, v_repeat_y); glVertex3f(-hx,  hy, hz);
 
-                if (_position.z > 0) { // Parede da FRENTE (Z > 0) - Ordem invertida
-                    glVertex3f(currentX,              currentY,               _position.z);
-                    glVertex3f(currentX,              currentY + segmentHeight, _position.z);
-                    glVertex3f(currentX + segmentWidth, currentY + segmentHeight, _position.z);
-                    glVertex3f(currentX + segmentWidth, currentY,               _position.z);
-                } else { // Parede de TRÁS (Z < 0) - Ordem normal
-                    glVertex3f(currentX,              currentY,               _position.z);
-                    glVertex3f(currentX + segmentWidth, currentY,               _position.z);
-                    glVertex3f(currentX + segmentWidth, currentY + segmentHeight, _position.z);
-                    glVertex3f(currentX,              currentY + segmentHeight, _position.z);
-                }
-            } else { // Parede orientada no eixo Z (esquerda/direita)
-                float currentZ = startZ + i * segmentDepth;
-                float currentY = startY + j * segmentHeight;
+        // Face de trás (-Z)
+        glNormal3f(0.0f, 0.0f, -1.0f);
+        glTexCoord2f(0, 0);          glVertex3f( hx, -hy, -hz);
+        glTexCoord2f(u_repeat_x, 0); glVertex3f(-hx, -hy, -hz);
+        glTexCoord2f(u_repeat_x, v_repeat_y); glVertex3f(-hx,  hy, -hz);
+        glTexCoord2f(0, v_repeat_y); glVertex3f( hx,  hy, -hz);
 
-                if (_position.x > 0) { // Parede da DIREITA (X > 0) - Ordem invertida
-                    glVertex3f(_position.x, currentY,               currentZ + segmentDepth);
-                    glVertex3f(_position.x, currentY + segmentHeight, currentZ + segmentDepth);
-                    glVertex3f(_position.x, currentY + segmentHeight, currentZ);
-                    glVertex3f(_position.x, currentY,               currentZ);
-                } else { // Parede da ESQUERDA (X < 0) - Ordem normal
-                    glVertex3f(_position.x, currentY,               currentZ + segmentDepth);
-                    glVertex3f(_position.x, currentY,               currentZ);
-                    glVertex3f(_position.x, currentY + segmentHeight, currentZ);
-                    glVertex3f(_position.x, currentY + segmentHeight, currentZ + segmentDepth);
-                }
-            }
-        }
-    }
+        // Face da direita (+X)
+        glNormal3f(1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0, 0);          glVertex3f(hx, -hy, -hz);
+        glTexCoord2f(w_repeat_z, 0); glVertex3f(hx, -hy,  hz);
+        glTexCoord2f(w_repeat_z, v_repeat_y); glVertex3f(hx,  hy,  hz);
+        glTexCoord2f(0, v_repeat_y); glVertex3f(hx,  hy, -hz);
+
+        // Face da esquerda (-X)
+        glNormal3f(-1.0f, 0.0f, 0.0f);
+        glTexCoord2f(0, 0);          glVertex3f(-hx, -hy,  hz);
+        glTexCoord2f(w_repeat_z, 0); glVertex3f(-hx, -hy, -hz);
+        glTexCoord2f(w_repeat_z, v_repeat_y); glVertex3f(-hx,  hy, -hz);
+        glTexCoord2f(0, v_repeat_y); glVertex3f(-hx,  hy,  hz);
+
+        // Face de cima (+Y)
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(0, 0);          glVertex3f(-hx, hy,  hz);
+        glTexCoord2f(u_repeat_x, 0); glVertex3f( hx, hy,  hz);
+        glTexCoord2f(u_repeat_x, w_repeat_z); glVertex3f( hx, hy, -hz);
+        glTexCoord2f(0, w_repeat_z); glVertex3f(-hx, hy, -hz);
+
+        // Face de baixo (-Y)
+        glNormal3f(0.0f, -1.0f, 0.0f);
+        glTexCoord2f(0, 0);          glVertex3f(-hx, -hy, -hz);
+        glTexCoord2f(u_repeat_x, 0); glVertex3f( hx, -hy, -hz);
+        glTexCoord2f(u_repeat_x, w_repeat_z); glVertex3f( hx, -hy,  hz);
+        glTexCoord2f(0, w_repeat_z); glVertex3f(-hx, -hy,  hz);
     glEnd();
+
     glPopMatrix();
+
+    if (_textureID) {
+        glDisable(GL_TEXTURE_2D);
+    }
 }
+
 
 BoundingBox Wall::getBoundingBox() const {
     BoundingBox box;
@@ -90,6 +111,5 @@ BoundingBox Wall::getBoundingBox() const {
 
     box.min = { _position.x - halfWidth, _position.y - halfHeight, _position.z - halfDepth };
     box.max = { _position.x + halfWidth, _position.y + halfHeight, _position.z + halfDepth };
-
     return box;
 }

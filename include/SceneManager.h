@@ -2,56 +2,36 @@
 #define SCENEMANAGER_H
 
 #include <vector>
-#include "Room.h"
-#include "InteractableObject.h"
+#include <string>
+#include "Vector.h" // <-- ADICIONE ESTA LINHA
 
-/**
- * @file SceneManager.h
- * @brief Define a classe SceneManager, responsÔøΩvel por gerenciar as salas (nÔøΩveis) do jogo.
- *
- * Esta classe controla qual sala estÔøΩ atualmente ativa, delegando as chamadas
- * de atualizaÔøΩÔøΩo (update) e renderizaÔøΩÔøΩo (render) para a sala correta.
- */
+// Forward declarations
+class GameObject;
+class InteractableObject;
+class Room;
+class Player;
+class GameStateManager;
+
 class SceneManager {
 public:
-    /**
-     * @brief Construtor da classe SceneManager.
-     */
     SceneManager();
-
-    /**
-     * @brief Destrutor da classe SceneManager.
-     * @note ResponsÔøΩvel por liberar a memÔøΩria de todas as salas criadas.
-     */
     ~SceneManager();
 
-    /**
-     * @brief Inicializa o gerenciador de cenas.
-     * ÔøΩ aqui que as salas do jogo sÔøΩo criadas e configuradas.
-     */
-    void init();
-
-    /**
-     * @brief Atualiza a lÔøΩgica da sala atualmente ativa.
-     * @param deltaTime O tempo decorrido desde o ÔøΩltimo frame.
-     */
-    // ATUALIZE A ASSINATURA AQUI
+    void init(Player& player);
     void update(float deltaTime, GameStateManager& gameStateManager);
-
-    /**
-     * @brief Renderiza a sala atualmente ativa.
-     */
     void render();
 
-    std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÔøΩTODO
-    void switchToRoom(int roomIndex); // <-- ADICIONE ESTE MÔøΩTODO
+    // Garante que a assinatura est· correta, usando Vector3f
+    void switchToRoom(int roomIndex, Player& player, const Vector3f& spawnPosition);
+
+    void setActiveRoom(int index);
+    std::vector<InteractableObject*>& getInteractableObjects();
     const std::vector<GameObject*>& getCurrentRoomObjects() const;
 
 private:
-    // Vetor que armazena ponteiros para todas as salas do jogo.
     std::vector<Room*> _rooms;
-    // √çndice que aponta para a sala atualmente ativa no vetor _rooms.
     int _currentRoomIndex;
+    Player* _player;
 };
 
 #endif // SCENEMANAGER_H

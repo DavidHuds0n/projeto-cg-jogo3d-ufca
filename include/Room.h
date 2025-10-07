@@ -1,9 +1,11 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+
 #include <vector>
+
 #include "GameObject.h"
-#include "InteractableObject.h"
+
 
 /**
  * @file Room.h
@@ -12,6 +14,8 @@
  * A classe Room é um contêiner para todos os GameObjects que existem dentro
  * dela. É responsável por gerenciar o ciclo de vida (update, render) desses objetos.
  */
+
+class InteractableObject;
 class Room {
 public:
     /**
@@ -45,7 +49,10 @@ public:
     std::vector<InteractableObject*>& getInteractableObjects(); // <-- ADICIONE ESTE MÉTODO
     const std::vector<GameObject*>& getObjects() const;
 
+    void setSpawnPoint(const Vector3f& pos) { _spawnPoint = pos; }
+    const Vector3f& getSpawnPoint() const { return _spawnPoint; }
 private:
+    Vector3f _spawnPoint = {0.0f, 1.6f, 0.0f};
     // Um vetor de ponteiros para GameObject. Armazena todas as entidades da sala.
     std::vector<GameObject*> _objects;
     std::vector<InteractableObject*> _interactables; // <-- ADICIONE ESTE VETOR

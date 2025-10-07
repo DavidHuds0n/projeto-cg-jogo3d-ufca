@@ -1,39 +1,45 @@
+// Substitua todo o conteúdo de Door.h
 #ifndef DOOR_H
 #define DOOR_H
 
 #include "InteractableObject.h"
 #include "PrimitiveObject.h"
 #include "Vector.h"
-#include "GameData.h" // Inclui o ItemType
+#include "GameData.h"
+#include <string>
+#include <vector>
 
+class GameStateManager; // Forward declaration
 
 class Door : public InteractableObject {
 public:
-    // Construtor para porta com item
-    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem = ItemType::CHAVE_SALA_1);
-    // Construtor para porta com puzzle
+    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition);
+    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, ItemType requiredItem);
+    Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, const std::vector<ItemType>& requiredItems);
     Door(const Vector3f& position, int targetRoomIndex, const Vector3f& spawnPosition, const std::string& requiredPuzzleId);
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;
     virtual void onClick(GameStateManager& gameStateManager) override;
     virtual float getCollisionRadius() const override;
+    virtual BoundingBox getBoundingBox() const override;
 
     int getTargetRoomIndex() const;
     const Vector3f& getSpawnPosition() const;
-    ItemType getRequiredItem() const;
+
+    // --- GETTERS RE-ADICIONADOS ---
+    const std::vector<ItemType>& getRequiredItems() const;
     const std::string& getRequiredPuzzle() const;
-    bool requiresPuzzle() const { return _requiresPuzzle; }
-    virtual BoundingBox getBoundingBox() const override;
+
+    bool canBeOpenedBy(const GameStateManager& gameStateManager) const;
 
 private:
     PrimitiveObject _visual;
     float _collisionRadius;
     int _targetRoomIndex;
     Vector3f _spawnPosition;
-    ItemType _requiredItem;
+    std::vector<ItemType> _requiredItems;
     std::string _requiredPuzzleId;
-    bool _requiresPuzzle = false;
 };
 
 #endif // DOOR_H

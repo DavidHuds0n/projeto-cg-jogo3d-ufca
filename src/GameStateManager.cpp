@@ -1,6 +1,7 @@
 #include "../include/GameStateManager.h"
 #include <algorithm> // Necessário para std::find e std::remove
 #include <iostream>  // Para mensagens de depuração no console
+#include "../include/SceneManager.h"
 
 GameStateManager::GameStateManager() {
     // Inicializa o estado de todos os puzzles como "não resolvidos"
@@ -22,24 +23,27 @@ void GameStateManager::setPuzzleState(const std::string& puzzleId, bool isSolved
     std::cout << "Estado do puzzle '" << puzzleId << "' definido como: " << (isSolved ? "RESOLVIDO" : "NAO RESOLVIDO") << std::endl;
 }
 
-bool GameStateManager::isPuzzleSolved(const std::string& puzzleId) {
+// Adicionamos 'const' aqui para corresponder ao .h
+bool GameStateManager::isPuzzleSolved(const std::string& puzzleId) const {
     // Retorna 'false' se o ID do puzzle não for encontrado no mapa
     if (_puzzleStates.find(puzzleId) == _puzzleStates.end()) {
         return false;
     }
-    return _puzzleStates[puzzleId];
+    return _puzzleStates.at(puzzleId); // Usar .at() é mais seguro para const maps
 }
 
 // --- MÉTODOS DE INVENTÁRIO ---
 
 void GameStateManager::addItemToInventory(ItemType item) {
-    if (!playerHasItem(item)) { // Evita adicionar itens duplicados
+    // Esta verificação interna não precisa de const pois o método em si não é const
+    if (std::find(_inventory.begin(), _inventory.end(), item) == _inventory.end()) {
         _inventory.push_back(item);
         std::cout << "Item adicionado ao inventario!" << std::endl;
     }
 }
 
-bool GameStateManager::playerHasItem(ItemType item) {
+// Adicionamos 'const' aqui para corresponder ao .h
+bool GameStateManager::playerHasItem(ItemType item) const {
     // Procura o item no vetor de inventário
     return std::find(_inventory.begin(), _inventory.end(), item) != _inventory.end();
 }
@@ -88,7 +92,6 @@ std::string GameStateManager::getKeypadInput() {
     return _keypadInput;
 }
 
-// Adicione estes métodos no final:
 void GameStateManager::setActiveKeypad(bool isActive) {
     _isKeypadActive = isActive;
     if (!isActive) { // Limpa o input se o keypad for desativado
@@ -100,3 +103,11 @@ bool GameStateManager::isKeypadActive() const {
     return _isKeypadActive;
 }
 
+/*
+void GameStateManager::processPending(SceneManager& sm, Player& player){
+    if (_pendinRoom >= 0) {
+        sm.switchToRoom(_pendinRoom, player); // esta linha causa o erro
+        _pendinRoom = -1;
+    }
+}
+*/

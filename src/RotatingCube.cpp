@@ -6,8 +6,18 @@
 
 RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
     : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
-    // Estado inicial aleatório
-    _rotationState = rand() % 4;
+
+    // Linhas antigas comentadas para a alteração temporária
+    // _rotationState = rand() % 4;
+    // if (row == 0 && col == 0) {
+    //     _rotationState = 0;
+    // }
+
+    // --- NOVA LINHA TEMPORÁRIA ---
+    // Força TODOS os cubos a começarem no estado 0 (a solução do puzzle)
+    _rotationState = 0;
+
+    // O resto do código continua igual, atualizando os ângulos com base no _rotationState
     _currentAngle = _rotationState * 90.0f;
     _targetAngle = _currentAngle;
     _currentPosition = position;
@@ -35,54 +45,44 @@ void RotatingCube::render() {
     glRotatef(_currentAngle, 0, 1, 0);
     glScalef(_size, _size, _size);
 
-    // Cores para as faces
-    GLfloat colors[6][4] = {
-        {1, 1, 0, 1}, // Amarelo
-        {1, 1, 1, 1}  // Branco
-    };
+    // --- LÓGICA DE COR CORRIGIDA ---
+    // Cores definidas para as faces
+    Vector3f corEspecial;
+    Vector3f corNormal;
+
+    // Define as cores com base se é o cubo especial (vermelho) ou normal (amarelo)
+    if (_row == 0 && _col == 0) {
+        corEspecial = {1.0f, 0.0f, 0.0f}; // Vermelho
+        corNormal = {0.4f, 0.4f, 0.4f};   // Cinza
+    } else {
+        corEspecial = {1.0f, 1.0f, 0.0f}; // Amarelo
+        corNormal = {1.0f, 1.0f, 1.0f};   // Branco
+    }
+
     glBegin(GL_QUADS);
-    // +Z
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[0]);
+    // +Z (Face Especial)
+    glColor3f(corEspecial.x, corEspecial.y, corEspecial.z);
     glNormal3f(0, 0, 1);
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f( 0.5f, -0.5f, 0.5f);
-    glVertex3f( 0.5f,  0.5f, 0.5f);
-    glVertex3f(-0.5f,  0.5f, 0.5f);
+    glVertex3f(-0.5f, -0.5f, 0.5f); glVertex3f( 0.5f, -0.5f, 0.5f); glVertex3f( 0.5f,  0.5f, 0.5f); glVertex3f(-0.5f,  0.5f, 0.5f);
+
+    // As outras 5 faces usam a cor normal
+    glColor3f(corNormal.x, corNormal.y, corNormal.z);
     // -Z
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[1]);
     glNormal3f(0, 0, -1);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f,  0.5f, -0.5f);
-    glVertex3f( 0.5f,  0.5f, -0.5f);
-    glVertex3f( 0.5f, -0.5f, -0.5f);
+    glVertex3f(-0.5f, -0.5f, -0.5f); glVertex3f(-0.5f,  0.5f, -0.5f); glVertex3f( 0.5f,  0.5f, -0.5f); glVertex3f( 0.5f, -0.5f, -0.5f);
     // +Y
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[1]);
     glNormal3f(0, 1, 0);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, 0.5f,  0.5f);
-    glVertex3f( 0.5f, 0.5f,  0.5f);
-    glVertex3f( 0.5f, 0.5f, -0.5f);
+    glVertex3f(-0.5f, 0.5f, -0.5f); glVertex3f(-0.5f, 0.5f,  0.5f); glVertex3f( 0.5f, 0.5f,  0.5f); glVertex3f( 0.5f, 0.5f, -0.5f);
     // -Y
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[1]);
     glNormal3f(0, -1, 0);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f( 0.5f, -0.5f, -0.5f);
-    glVertex3f( 0.5f, -0.5f,  0.5f);
-    glVertex3f(-0.5f, -0.5f,  0.5f);
+    glVertex3f(-0.5f, -0.5f, -0.5f); glVertex3f( 0.5f, -0.5f, -0.5f); glVertex3f( 0.5f, -0.5f,  0.5f); glVertex3f(-0.5f, -0.5f,  0.5f);
     // +X
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[1]);
     glNormal3f(1, 0, 0);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f,  0.5f, -0.5f);
-    glVertex3f(0.5f,  0.5f,  0.5f);
-    glVertex3f(0.5f, -0.5f,  0.5f);
+    glVertex3f(0.5f, -0.5f, -0.5f); glVertex3f(0.5f,  0.5f, -0.5f); glVertex3f(0.5f,  0.5f,  0.5f); glVertex3f(0.5f, -0.5f,  0.5f);
     // -X
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colors[1]);
     glNormal3f(-1, 0, 0);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f,  0.5f);
-    glVertex3f(-0.5f,  0.5f,  0.5f);
-    glVertex3f(-0.5f,  0.5f, -0.5f);
+    glVertex3f(-0.5f, -0.5f, -0.5f); glVertex3f(-0.5f, -0.5f,  0.5f); glVertex3f(-0.5f,  0.5f,  0.5f); glVertex3f(-0.5f,  0.5f, -0.5f);
+
     glEnd();
     glPopMatrix();
 }

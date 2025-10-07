@@ -9,16 +9,17 @@ PrimitiveObject::PrimitiveObject(PrimitiveShape shape, const Vector3f& position,
 }
 
 void PrimitiveObject::update(float deltaTime, GameStateManager& gameStateManager) {
-    // Objetos de teste s�o est�ticos.
+    // Objetos primitivos são estáticos.
 }
 
+// --- FUNÇÃO RENDER CORRIGIDA ---
 void PrimitiveObject::render() {
-    GLfloat diffuse_material[] = { _color.x, _color.y, _color.z, 1.0f };
-    GLfloat specular_material[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diffuse_material);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_material);
-    glMaterialf(GL_FRONT, GL_SHININESS, 50.0f);
+    // --- LÓGICA DE COR CORRIGIDA ---
+    // Removemos as chamadas a glMaterialfv e usamos glColor3f.
+    // Como GL_COLOR_MATERIAL está ativo, a iluminação será calculada com base nesta cor.
+    glColor3f(_color.x, _color.y, _color.z);
 
+    // O resto do código continua igual
     glPushMatrix();
     glTranslatef(_position.x, _position.y, _position.z);
     glScalef(_scale.x, _scale.y, _scale.z);
@@ -29,23 +30,22 @@ void PrimitiveObject::render() {
             break;
         case PrimitiveShape::CONE:
             glRotatef(-90, 1.0f, 0.0f, 0.0f);
-            glutSolidCone(1.0, 2.0, 32, 32);
+            glutSolidCone(0.5, 1.0, 32, 32);
             break;
         case PrimitiveShape::TORUS:
             glutSolidTorus(0.5, 1.0, 32, 32);
             break;
-        case PrimitiveShape::TEAPOT:
-            glutSolidTeapot(1.0);
+        case PrimitiveShape::TEAPOT: {
+            glutSolidTeapot(1.0f);
             break;
+        }
         case PrimitiveShape::CUBE:
-            glutSolidCube(2.0); // Cubo de lado 2.0 (padrão)
+            glutSolidCube(1.0);
             break;
     }
     glPopMatrix();
 }
 
-// M�todo implementado
 BoundingBox PrimitiveObject::getBoundingBox() const {
-    // Retorna uma caixa "inv�lida" porque este objeto � apenas visual.
     return {{0,0,0}, {0,0,0}};
 }

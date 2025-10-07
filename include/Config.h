@@ -65,6 +65,10 @@ namespace Config {
     static const float TILE_SIZE = 2.0f;
     /** @brief Altura das paredes do labirinto. */
     static const float WALL_HEIGHT = 3.0f;
+
+    // --- Configurações de Debug ---
+    /** @brief Se true, desenha uma esfera semi-transparente em volta dos objetos interagíveis. */
+    static const bool DEBUG_DRAW_HITBOXES = true;
 }
 
 #endif // CONFIG_H

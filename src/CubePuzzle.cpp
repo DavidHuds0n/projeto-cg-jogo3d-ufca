@@ -41,9 +41,14 @@ CubePuzzle::~CubePuzzle() {
 }
 
 void CubePuzzle::update(float deltaTime, GameStateManager& gameStateManager) {
+    // Atualiza cada cubo individualmente (isso já existe)
     for (auto& row : _cubes)
         for (auto* cube : row)
             cube->update(deltaTime, gameStateManager);
+
+    // --- ADICIONE ESTA LINHA AQUI ---
+    // Chama a função de verificação a cada frame.
+    checkSolution(gameStateManager);
 }
 
 void CubePuzzle::render() {
@@ -74,12 +79,16 @@ void CubePuzzle::checkSolution(GameStateManager& gameStateManager) {
     if (!_solved) {
         gameStateManager.setPuzzleState(_puzzleId, true);
         std::cout << "Puzzle dos cubos resolvido!" << std::endl;
+
+        /* --- COMENTE ESTE BLOCO DE CÓDIGO ---
         // Exemplo: animação - todos os cubos sobem
         for (auto& row : _cubes)
             for (auto* cube : row) {
                 Vector3f pos = cube->getPosition();
                 cube->moveTo({pos.x, pos.y + 2.0f, pos.z});
             }
+        */
+
         _solved = true;
     }
 }
