@@ -21,32 +21,13 @@
  * @param col A coluna do cubo na grade do quebra-cabeça.
  * @param puzzleManager Um ponteiro para o gerenciador do quebra-cabeça.
  */
- /*
-RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
-    : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
-
-    // Lógica de aleatoriedade para o estado de rotação inicial.
-    _rotationState = rand() % 4;
-
-    // Se a posição for (0,0), o cubo começa no estado de rotação correto (0),
-    // servindo como uma dica.
-    if (row == 0 && col == 0) {
-        _rotationState = 0;
-    }
-
-    _currentAngle = _rotationState * 90.0f;
-    _targetAngle = _currentAngle;
-    _currentPosition = position;
-    _targetPosition = position;
-}
-*/
 
 
 RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
     : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
 
     // --- CÓDIGO PARA RESOLVER O PUZZLE INSTANTANEAMENTE ---
-    _rotationState = 0;
+    _rotationState = rand() % 4 * 90.0f; // Estado inicial aleatório
 
     _currentAngle = _rotationState * 90.0f;
     _targetAngle = _currentAngle;
@@ -73,7 +54,7 @@ void RotatingCube::update(float deltaTime, GameStateManager&) {
         _currentAngle = _targetAngle;
     }
     // Animação suave de movimento (LERP)
-    float speed = 0.1f;
+    float speed = 5.0f;
     _currentPosition.x += (_targetPosition.x - _currentPosition.x) * std::min(1.0f, deltaTime * speed);
     _currentPosition.y += (_targetPosition.y - _currentPosition.y) * std::min(1.0f, deltaTime * speed);
     _currentPosition.z += (_targetPosition.z - _currentPosition.z) * std::min(1.0f, deltaTime * speed);
@@ -92,17 +73,8 @@ void RotatingCube::render() {
     glScalef(_size, _size, _size);
 
     // Define as cores para as faces
-    Vector3f corEspecial;
-    Vector3f corNormal;
-
-    // Define as cores com base se é o cubo especial ou normal
-    if (_row == 0 && _col == 0) { // Cubo Especial (Vermelho)
-        corEspecial = {1.0f, 0.0f, 0.0f}; // Vermelho
-        corNormal = {0.4f, 0.4f, 0.4f};   // Cinza
-    } else { // Cubo Normal (Amarelo)
-        corEspecial = {1.0f, 1.0f, 0.0f}; // Amarelo
-        corNormal = {0.4f, 0.4f, 0.4f};   // Cinza
-    }
+    Vector3f corEspecial = {1.0f, 1.0f, 0.0f};
+    Vector3f corNormal = {0.4f, 0.4f, 0.4f};
 
     glBegin(GL_QUADS);
     // +Z (Face Especial)

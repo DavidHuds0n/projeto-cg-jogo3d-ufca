@@ -101,6 +101,7 @@ void CubePuzzle::render() {
  * @param col A coluna do cubo clicado.
  */
 void CubePuzzle::onCubeClicked(int row, int col) {
+    if (_solved) return; // Não faz nada se já estiver resolvido
     if (row < 0 || row >= _rows || col < 0 || col >= _cols) return;
     _cubes[row][col]->rotate();
     if (col > 0) _cubes[row][col - 1]->rotate();
@@ -131,14 +132,6 @@ void CubePuzzle::checkSolution(GameStateManager& gameStateManager) {
     if (!_solved) {
         gameStateManager.setPuzzleState(_puzzleId, true);
         std::cout << "Puzzle dos cubos resolvido!" << std::endl;
-        /*
-        // Exemplo: animação - todos os cubos sobem
-        for (auto& row : _cubes)
-            for (auto* cube : row) {
-                Vector3f pos = cube->getPosition();
-                cube->moveTo({pos.x, pos.y + 2.0f, pos.z});
-            }
-        */
         _solved = true;
     }
 }
