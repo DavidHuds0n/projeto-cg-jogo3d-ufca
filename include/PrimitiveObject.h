@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include "Vector.h"
 
-// Mantivemos a adição do CUBE, escolhendo a versão com melhor formatação.
 enum class PrimitiveShape { SPHERE, CONE, TORUS, TEAPOT, CUBE };
 
 class PrimitiveObject : public GameObject {
@@ -15,7 +14,6 @@ public:
     virtual void render() override;
     virtual BoundingBox getBoundingBox() const override;
 
-    // Mantivemos o novo método 'setColor', que não estava em conflito.
     void setColor(const Vector3f& c) {_color = c;}
 
 private:

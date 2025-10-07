@@ -8,11 +8,8 @@
 
 class Wall : public GameObject {
 public:
-    // Construtor original (com textura)
     Wall(const Vector3f& position, const Vector3f& size, const std::string& textureFile);
 
-    // --- NOVO CONSTRUTOR ---
-    // Permite criar uma parede sem especificar uma textura, para simplificar o código.
     Wall(const Vector3f& position, const Vector3f& size);
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;

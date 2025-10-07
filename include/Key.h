@@ -8,14 +8,12 @@
 
 class Key : public InteractableObject {
 public:
-    // --- CONSTRUTOR ATUALIZADO ---
-    // A declaração agora corresponde à implementação no .cpp, com 6 parâmetros.
     Key(const Vector3f& position,
         ItemType keyType,
         const std::string& puzzleIdRequired = "",
         bool form = false,
         const Vector3f& color = {1.0f, 0.9f, 0.8f},
-        const Vector3f& scale = {0.4f, 0.4f, 0.4f}); // <-- PARÂMETRO QUE FALTAVA
+        const Vector3f& scale = {0.4f, 0.4f, 0.4f});
 
     virtual void update(float deltaTime, GameStateManager& gameStateManager) override;
     virtual void render() override;

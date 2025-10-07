@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "Vector.h" // <-- ADICIONE ESTA LINHA
+#include "Vector.h"
 
 // Forward declarations
 class GameObject;
@@ -21,7 +21,6 @@ public:
     void update(float deltaTime, GameStateManager& gameStateManager);
     void render();
 
-    // Garante que a assinatura está correta, usando Vector3f
     void switchToRoom(int roomIndex, Player& player, const Vector3f& spawnPosition);
 
     void setActiveRoom(int index);

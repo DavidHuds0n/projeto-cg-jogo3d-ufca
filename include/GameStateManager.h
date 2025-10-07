@@ -15,9 +15,9 @@ class GameStateManager {
 public:
     GameStateManager();
     void setPuzzleState(const std::string& puzzleId, bool isSolved);
-    bool isPuzzleSolved(const std::string& puzzleId) const; // <-- const ADICIONADO
+    bool isPuzzleSolved(const std::string& puzzleId) const;
     void addItemToInventory(ItemType item);
-    bool playerHasItem(ItemType item) const; // <-- const ADICIONADO
+    bool playerHasItem(ItemType item) const;
     void removeItemFromInventory(ItemType item);
     void cycleFlashlightColor();
     Vector3f getCurrentFlashlightColor();
@@ -26,10 +26,6 @@ public:
     std::string getKeypadInput();
     void setActiveKeypad(bool isActive);
     bool isKeypadActive() const;
-    // --- APAGUE AS 3 LINHAS ABAIXO ---
-    // void queueRoomChange(int roomIndex) { _pendinRoom = roomIndex; }
-    // void processPending(SceneManager& sm, Player& player);
-    // ------------------------------------
 
 private:
     std::map<std::string, bool> _puzzleStates;
@@ -37,10 +33,6 @@ private:
     int _currentFlashlightColorIndex;
     std::string _keypadInput;
     bool _isKeypadActive;
-    // --- APAGUE AS 2 LINHAS ABAIXO ---
-    // int _pendinRoom = -1;
-    // float _player; // Esta variável parece ser um erro de digitação de qualquer forma
-    // ------------------------------------
 };
 
 #endif // GAMESTATEMANAGER_H

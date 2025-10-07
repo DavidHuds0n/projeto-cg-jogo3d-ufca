@@ -52,8 +52,8 @@ private:
     // --- Membros do Jogo ---
     Player       _player;
     LightManager _lightManager;
-    SceneManager _sceneManager;   // Substitui o antigo 'Level'
-    GameStateManager _gameStateManager; // <-- ADICIONE AQUI
+    SceneManager _sceneManager;
+    GameStateManager _gameStateManager;
     GameState    _currentState;
     GameStateManager _gsm;
 };

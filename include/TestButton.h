@@ -14,7 +14,6 @@ public:
     virtual void onClick(GameStateManager& gameStateManager) override;
     virtual float getCollisionRadius() const override;
 
-    // --- ADICIONE ESTA LINHA ---
     virtual BoundingBox getBoundingBox() const override;
 
 private:

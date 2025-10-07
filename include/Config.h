@@ -51,7 +51,6 @@ namespace Config {
     /** @brief Ângulo de abertura do cone de luz da lanterna. */
     static const float FLASHLIGHT_CUTOFF = 25.0f;
     /** @brief Expoente que define a suavidade da borda do cone de luz. */
-    // AJUSTE AQUI: Diminua este valor para uma borda mais suave.
     static const float FLASHLIGHT_EXPONENT = 40.0f; // <--- Mude de 40.0f para 15.0f
     /** @brief Fator de atenuação constante da luz da lanterna. */
     static const float FLASHLIGHT_ATT_CONSTANT = 1.0f;

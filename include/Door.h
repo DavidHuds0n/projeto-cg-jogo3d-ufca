@@ -27,7 +27,6 @@ public:
     int getTargetRoomIndex() const;
     const Vector3f& getSpawnPosition() const;
 
-    // --- GETTERS RE-ADICIONADOS ---
     const std::vector<ItemType>& getRequiredItems() const;
     const std::string& getRequiredPuzzle() const;
 
