@@ -1,25 +1,40 @@
 #include "../include/Key.h"
 #include <iostream>
+#include <algorithm> // Necessário para usar std::max
+#include <cmath>     // Necessário para usar std::max em algumas configurações de compilador
 
 Key::Key(const Vector3f& position,
          ItemType keyType,
          const std::string& puzzleIdRequired,
          bool form,
-         const Vector3f& color) // <<-- cor recebida
+         const Vector3f& color,
+         const Vector3f& scale)
     : InteractableObject(position),
       _visual(form ? PrimitiveShape::TEAPOT : PrimitiveShape::CONE,
               position,
               color,
-              {0.4f, 0.4f, 0.4f}),
+              scale),
       _puzzleIdRequired(puzzleIdRequired),
       _keyType(keyType)
 {
     _color = color;
     _visual.setColor(color);
-    _collisionRadius = 0.5f;
     _isCollected = false;
     _isVisible = puzzleIdRequired.empty();
     setInteractable(puzzleIdRequired.empty());
+
+    // --- LÓGICA DE HITBOX DINÂMICA ---
+    // Em vez de um valor fixo, calculamos o raio com base no tamanho visual do objeto.
+
+    // 1. Pega a maior dimensão da escala do objeto (x, y, ou z).
+    float maxScale = std::max({scale.x, scale.y, scale.z});
+
+    // 2. Define um raio base para o modelo 3D (cone/bule) em escala 1.0.
+    //    Este valor pode ser ajustado se o modelo for muito largo ou fino. 0.8 é um bom começo.
+    float baseModelRadius = 0.8f;
+
+    // 3. Calcula o raio final: o raio do modelo * a maior escala * uma pequena folga (10%).
+    _collisionRadius = baseModelRadius * maxScale * 1.1f;
 }
 
 void Key::update(float deltaTime, GameStateManager& gameStateManager) {
@@ -43,7 +58,6 @@ void Key::onClick(GameStateManager& gameStateManager) {
     _isCollected = true;
     setInteractable(false);
 
-    // Adiciona o TIPO CORRETO de chave ao inventário
     gameStateManager.addItemToInventory(_keyType);
 }
 

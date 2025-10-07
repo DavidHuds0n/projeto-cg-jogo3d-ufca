@@ -1,43 +1,32 @@
 #ifndef PUZZLEDOOR_H
 #define PUZZLEDOOR_H
 
-#include "InteractableObject.h"
-#include "Vector.h"
+#include "Door.h" // Herda diretamente de Door
 
-class PuzzleDoor : public InteractableObject {
+class PuzzleDoor : public Door {
 public:
-    //enum class Mode { Deadly, Winning };
-
-    // NOVO: tipos de símbolo
+    // Enum para os tipos de ícone
     enum class Icon { None, Wave, Sun, Mountain };
 
-    // Construtor: posição, modo, cor da porta, ÍCONE e cor do brilho do ícone
-    /*PuzzleDoor(const Vector3f& position, Mode mode, const Vector3f& doorColor,
-               Icon icon = Icon::None, const Vector3f& iconGlow = {1.0f, 1.0f, 1.0f},
-               float radius = 1.5f);*/
-    PuzzleDoor(const Vector3f& position, const Vector3f& doorColor,int nextRoomIndex = -1,
-               Icon icon = Icon::None, const Vector3f& iconGlow = {1.0f, 1.0f, 1.0f},
-               float radius = 1.5f);
+    // Construtor atualizado para ser consistente com a classe Door,
+    // recebendo targetRoomIndex e spawnPosition, além dos parâmetros visuais.
+    PuzzleDoor(const Vector3f& position,
+               int targetRoomIndex,
+               const Vector3f& spawnPosition,
+               const Vector3f& doorColor,
+               Icon icon = Icon::None,
+               const Vector3f& iconGlow = {1.0f, 1.0f, 1.0f});
 
-    void update(float, GameStateManager&) override {}
-    void render() override;
-    void onClick(GameStateManager&) override;
-
-    float getCollisionRadius() const override { return _collisionRadius; }
-    BoundingBox getBoundingBox() const override { return {{0,0,0},{0,0,0}}; }
-
-    //bool isDeadly() const { return _mode == Mode::Deadly; }
-    //bool isWinning() const { return _mode == Mode::Winning; }
-    const Vector3f& getPosition() const { return _position; }
+    // Sobrescreve apenas a função render para ter uma aparência customizada.
+    // As outras funções (onClick, getCollisionRadius, etc.) são herdadas de Door.
+    virtual void render() override;
 
 private:
-    Vector3f _position;
+    // Apenas os membros exclusivos da PuzzleDoor.
+    // _position, _targetRoomIndex, _spawnPosition, _collisionRadius são herdados de Door.
     Vector3f _doorColor;
-    Vector3f _iconGlow;     // cor do “neon” do ícone
-    //Mode _mode;
-    int _nextRoomIndex;
+    Vector3f _iconGlow;
     Icon _icon;
-    float _collisionRadius;
 };
 
-#endif
+#endif // PUZZLEDOOR_H

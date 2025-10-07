@@ -1,8 +1,11 @@
 #include "../include/PuzzleDoor.h"
 #include <GL/freeglut.h>
 #include <cmath>
-#include "../include/GameStateManager.h"
-#include <algorithm>
+#include <algorithm> // Incluído para compatibilidade
+
+//================================================================================
+// Funções Auxiliares de Desenho (sem alterações)
+//================================================================================
 
 // -------- util: estado de blending “neon” ----------
 struct BlendGuard {
@@ -27,7 +30,7 @@ struct BlendGuard {
     }
 };
 
-// -------- porta “estilo foto” (igual versão anterior) ----------
+// -------- porta “estilo foto” ----------
 static void drawDoorBody(const Vector3f& color) {
     const float W = 1.1f;
     const float H = 2.2f;
@@ -72,21 +75,18 @@ static void drawDoorBody(const Vector3f& color) {
 
 // -------- desenhos dos ícones no plano da porta ----------
 static void drawIconWave(float scale) {
-    // 2 ondas sobrepostas
-    const float A = 0.30f, B = 0.22f;   // amplitudes
+    const float A = 0.30f, B = 0.22f;
     const int   N = 64;
     glBegin(GL_LINE_STRIP);
     for (int i=0;i<=N;i++){
-        float t = (float)i/N;
-        float x = (t-0.5f) * 0.9f;
+        float t = (float)i/N; float x = (t-0.5f) * 0.9f;
         float y = 0.10f + A * std::sin(6.28318f*(t+0.05f));
         glVertex3f(scale*x, scale*y, 0.0f);
     }
     glEnd();
     glBegin(GL_LINE_STRIP);
     for (int i=0;i<=N;i++){
-        float t = (float)i/N;
-        float x = (t-0.5f) * 0.9f;
+        float t = (float)i/N; float x = (t-0.5f) * 0.9f;
         float y = -0.10f + B * std::sin(6.28318f*(t+0.20f));
         glVertex3f(scale*x, scale*y, 0.0f);
     }
@@ -94,20 +94,16 @@ static void drawIconWave(float scale) {
 }
 
 static void drawIconSun(float scale) {
-    // círculo + raios
-    const int N = 48;
-    const float R = 0.28f;
+    const int N = 48; const float R = 0.28f;
     glBegin(GL_LINE_LOOP);
     for (int i=0;i<N;i++){
         float a = 2.0f*3.14159f*i/N;
         glVertex3f(scale*R*std::cos(a), scale*R*std::sin(a), 0.0f);
     }
     glEnd();
-    // raios
     glBegin(GL_LINES);
     for (int i=0;i<12;i++){
-        float a = 2.0f*3.14159f*i/12.0f;
-        float r1 = R*1.15f, r2 = R*1.45f;
+        float a = 2.0f*3.14159f*i/12.0f; float r1 = R*1.15f, r2 = R*1.45f;
         glVertex3f(scale*r1*std::cos(a), scale*r1*std::sin(a), 0.0f);
         glVertex3f(scale*r2*std::cos(a), scale*r2*std::sin(a), 0.0f);
     }
@@ -115,7 +111,6 @@ static void drawIconSun(float scale) {
 }
 
 static void drawIconMountain(float scale) {
-    // três picos
     glBegin(GL_LINE_STRIP);
       glVertex3f(scale*-0.45f, scale*-0.25f, 0.0f);
       glVertex3f(scale*-0.15f, scale* 0.18f, 0.0f);
@@ -123,7 +118,6 @@ static void drawIconMountain(float scale) {
       glVertex3f(scale* 0.20f, scale* 0.26f, 0.0f);
       glVertex3f(scale* 0.40f, scale*-0.25f, 0.0f);
     glEnd();
-    // neve do pico do meio
     glBegin(GL_LINE_STRIP);
       glVertex3f(scale*0.13f, scale*0.20f, 0.0f);
       glVertex3f(scale*0.20f, scale*0.26f, 0.0f);
@@ -131,15 +125,13 @@ static void drawIconMountain(float scale) {
     glEnd();
 }
 
-// desenha ícone com “aura” (duas passadas aumentando linewidth e alpha)
 static void drawIconNeon(PuzzleDoor::Icon icon, const Vector3f& glow, float zOffset) {
     BlendGuard guard;
-
     auto draw = [&](float scale, float alpha, float lineWidth){
         glColor4f(glow.x, glow.y, glow.z, alpha);
         glLineWidth(lineWidth);
         glPushMatrix();
-          glTranslatef(0.0f, 0.15f, zOffset); // centro do desenho
+          glTranslatef(0.0f, 0.15f, zOffset);
           switch (icon) {
             case PuzzleDoor::Icon::Wave:     drawIconWave(scale);     break;
             case PuzzleDoor::Icon::Sun:      drawIconSun(scale);      break;
@@ -148,52 +140,47 @@ static void drawIconNeon(PuzzleDoor::Icon icon, const Vector3f& glow, float zOff
           }
         glPopMatrix();
     };
-
-    // “aura” (grossa, alpha baixo) + traço principal (fino, alpha alto)
-    draw(/*scale*/1.0f, /*alpha*/0.18f, /*lw*/8.0f);
-    draw(/*scale*/1.0f, /*alpha*/0.90f, /*lw*/2.5f);
+    draw(1.0f, 0.18f, 8.0f);
+    draw(1.0f, 0.90f, 2.5f);
 }
 
-// ----------------------------------------------------------
 
-/*PuzzleDoor::PuzzleDoor(const Vector3f& position, Mode mode, const Vector3f& doorColor,
-                       Icon icon, const Vector3f& iconGlow, float radius)
-: InteractableObject(position),
-  _position(position),
-  _doorColor(doorColor),
-  _iconGlow(iconGlow),
-  _mode(mode),
-  _icon(icon),
-  _collisionRadius(radius) {}*/
+//================================================================================
+// Implementação da Classe PuzzleDoor (Corrigido)
+//================================================================================
 
-PuzzleDoor::PuzzleDoor(const Vector3f& position, const Vector3f& doorColor,int nextRoomIndex,
-                       Icon icon, const Vector3f& iconGlow, float radius)
-: InteractableObject(position),
-  _position(position),
-  _doorColor(doorColor),
-  _nextRoomIndex(nextRoomIndex),
-  _iconGlow(iconGlow),
-  _icon(icon),
-  _collisionRadius(radius) {}
+PuzzleDoor::PuzzleDoor(const Vector3f& position,
+                       int targetRoomIndex,
+                       const Vector3f& spawnPosition,
+                       const Vector3f& doorColor,
+                       Icon icon,
+                       const Vector3f& iconGlow)
+    // Chama o construtor da classe base 'Door' para inicializar os membros herdados
+    : Door(position, targetRoomIndex, spawnPosition),
+      _doorColor(doorColor),
+      _iconGlow(iconGlow),
+      _icon(icon)
+{
+    // O construtor da classe base já fez todo o trabalho de inicialização
+    // de posição, raio de colisão, etc. O corpo pode ficar vazio.
+}
 
 void PuzzleDoor::render() {
     glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT);
-    glDisable(GL_LIGHTING); // cores “planas” para a porta
+    glDisable(GL_LIGHTING);
     glPushMatrix();
-      glTranslatef(_position.x, _position.y, _position.z);
+      // Usa a função getPosition() herdada de Door/InteractableObject
+      glTranslatef(getPosition().x, getPosition().y, getPosition().z);
       drawDoorBody(_doorColor);
 
-      // ÍCONE (se houver)
       if (_icon != Icon::None) {
           const float T = 0.10f;
-          drawIconNeon(_icon, _iconGlow, /*zOffset*/ T*0.49f);
+          drawIconNeon(_icon, _iconGlow, T * 0.49f);
       }
     glPopMatrix();
     glPopAttrib();
 }
-void PuzzleDoor::onClick(GameStateManager& gsm) {
-    if (_nextRoomIndex >= 0) {
-            gsm.queueRoomChange(_nextRoomIndex);   // <— pedimos pra trocar de sala
-        }
-}
 
+// A função onClick() foi REMOVIDA. A PuzzleDoor agora usa a função onClick
+// da sua classe pai (Door), que está vazia, pois a lógica de transição
+// de sala é gerenciada pela classe Game, como deve ser.

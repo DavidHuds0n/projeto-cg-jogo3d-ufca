@@ -1,22 +1,20 @@
 #include "../include/SceneManager.h"
 
-// Includes para todos os objetos que vamos criar nas salas
+// Includes para todos os objetos
 #include "../include/Floor.h"
 #include "../include/Wall.h"
 #include "../include/PrimitiveObject.h"
-#include "../include/TestButton.h"
 #include "../include/Key.h"
 #include "../include/Door.h"
 #include "../include/PuzzleDoor.h"
 #include "../include/Sign.h"
-#include "../include/ControlPanel.h"
-#include "../include/Keypad.h"
+#include "../include/CubePuzzle.h"
+#include "../include/RotatingCube.h"
+#include "../include/Player.h"
 #include "../include/Room.h"
 #include "../include/InteractableObject.h"
-
 #include <cstddef>
 #include <iostream>
-
 
 SceneManager::SceneManager() {
     _currentRoomIndex = -1;
@@ -30,265 +28,186 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::init(Player& player) {
-    // --- CRIAÇÃO DA SALA 1 ---
-     _player = &player;
+    _player = &player;
+    const int penaltyRoomIndex = 5; // Índice da sala de "Game Over"
+    const float spawnHeight = 1.6f; // Altura padrão consistente para o spawn do jogador
 
+    // --- SALA 1 (ÍNDICE 0): PUZZLE DAS PORTAS COM ÍCONES ---
     Room* room1 = new Room();
     {
         room1->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
         const float wallHeight = 4.0f;
         const float roomSize   = 5.0f;
-        const int indexPuzzle5 = 1;
         room1->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
         room1->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
         room1->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
         room1->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
 
-        // Portas no fundo (z = -4.6f aprox). Cores:
-        // Azul (correta), Vermelha (errada), Amarela (errada)
         Vector3f RED   = {0.85f, 0.10f, 0.10f};
-        Vector3f CYAN  = {0.1f, 0.5f, 1.0f};  // brilho “oceano/céu”
-        Vector3f AMBER = {1.00f, 0.72f, 0.12f};  // brilho “sol”
-        Vector3f LIME  = {0.45f, 0.95f, 0.35f};  // brilho “montanha/terra”
+        Vector3f CYAN  = {0.1f, 0.5f, 1.0f};
+        Vector3f AMBER = {1.00f, 0.72f, 0.12f};
+        Vector3f LIME  = {0.45f, 0.95f, 0.35f};
 
-        // Esquerda: errada (SOL)
-        room1->addObject(new PuzzleDoor(
-            {-3.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Deadly,
-            RED,-1,
-            PuzzleDoor::Icon::Sun, AMBER
-        ));
-        // Centro: CORRETA (ONDA = oceano)
-        room1->addObject(new PuzzleDoor(
-            { 0.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Winning,
-            RED,indexPuzzle5,
-            PuzzleDoor::Icon::Wave, CYAN
-        ));
-        // Direita: errada (MONTANHA)
-        room1->addObject(new PuzzleDoor(
-            { 3.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Deadly,
-            RED,-1,
-            PuzzleDoor::Icon::Mountain, LIME
-        ));
+        // Portas erradas levam à sala de penalidade. A correta leva para a próxima sala (índice 1).
+        room1->addObject(new PuzzleDoor({-3.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, RED, PuzzleDoor::Icon::Sun, AMBER));
+        room1->addObject(new PuzzleDoor({ 0.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, RED, PuzzleDoor::Icon::Wave, CYAN));
+        room1->addObject(new PuzzleDoor({ 3.0f, 1.0f, -4.6f}, 1, {0.0f, spawnHeight, 4.5f}, RED, PuzzleDoor::Icon::Mountain, LIME)); // CORRETA
 
-        // Placa (mesma charada do oceano)
-        room1->addObject(new Sign({0.0f, 2.75f, -4.25f},
-          "Mostro fogo ao entardecer, visto gelo em alguns lugares e guardo picos que quase ninguem ve. Quem sou eu?"));
+        room1->addObject(new Sign({0.0f, 2.75f, -4.25f}, "Mostro fogo ao entardecer, visto gelo em alguns lugares e guardo picos que quase ninguem ve. Quem sou eu?"));
     }
     _rooms.push_back(room1);
 
-      Room* room2 = new Room();
+    // --- SALA 2 (ÍNDICE 1): PUZZLE DAS PORTAS COLORIDAS ---
+    Room* room2 = new Room();
     {
-        // Estrutura
-        room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
+        room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
         const float wallHeight = 4.0f;
-        const float roomSize   = 6.0f;
-        room2->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
-        room2->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
-        room2->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
-        room2->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
+        const float roomSize   = 5.0f;
+        room2->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room2->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room2->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
+        room2->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
 
-        // Porta de Volta para Sala 4 (entrada)
-       // room2->addObject(new Door({0.0f, 1.0f, 5.5f}, 3, {0.0f, 1.0f, -3.5f}, ItemType::NENHUM));
+        Vector3f RED   = {0.85f, 0.10f, 0.10f};
+        Vector3f CYAN  = {0.1f, 0.5f, 1.0f};
+        Vector3f AMBER = {1.00f, 0.72f, 0.12f};
+        Vector3f LIME  = {0.45f, 0.95f, 0.35f};
 
-        // Porta de Saída para Sala 6 (requer CHAVE_SALA_5)
-        room2->addObject(new Door({0.0f, 1.0f, -5.5f}, 2, {0.0f, 1.0f, 4.5f}, ItemType::CHAVE_SALA_1));
+        room2->addObject(new PuzzleDoor({-3.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, RED, PuzzleDoor::Icon::None, AMBER));
+        room2->addObject(new PuzzleDoor({ 0.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, CYAN, PuzzleDoor::Icon::None, CYAN));
+        room2->addObject(new PuzzleDoor({ 3.0f, 1.0f, -4.6f}, 2, {0.0f, spawnHeight, 4.5f}, LIME, PuzzleDoor::Icon::None, LIME)); // CORRETA
 
-        // --- OBJETOS DA SALA 5: O Puzzle de Anomalia (Teapots) ---
-        Vector3f TEAPOT_COLOR_NORMAL = {0.4f, 0.4f, 0.4f}; // Cinza-Claro Normal
-        Vector3f TEAPOT_COLOR_ANOMALY = {0.7f, 0.3f, 0.3f}; // Vermelho Sutil
-
-        // Crio 8 Teapots normais em círculo/quadrado
-        float teapot_y = 1.0f;
-        float radius = 3.5f;
-
-        // Posições em 4 cantos
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y, -radius}, {1.0f, 0.8f, 0.4f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y, -radius}, {0.0f, 0.0f, 1.0f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  radius}, {0.4f, 0.7f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        // O Teapot de Canto Anormal (Cor diferente)
-        //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_ANOMALY));
-
-        // Posições no meio das paredes
-        //room5->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y, -radius}, {0.5f, 0.5f, 0.5f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { 0.0f, teapot_y,  radius}, {0.5f, 0.0f, 0.8f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, {-radius, teapot_y,  0.0f}, {0.0f, 0.9f, 0.3f}, TEAPOT_COLOR_NORMAL));
-        room2->addObject(new PrimitiveObject(PrimitiveShape::TEAPOT, { radius, teapot_y,  0.0f}, {0.8f, 0.4f, 0.3f}, TEAPOT_COLOR_NORMAL));
-
-        // A Placa com a Dica
-        room2->addObject(new Sign({0.0f, 2.75f, -5.0f},
-          "Olhe atentamente para o que parece igual. A chave para o proximo passo esconde-se naquele que tem uma COR ou FORMA ligeiramente diferente."));
-
-        // O objeto que o jogador deve interagir para obter a chave
-        // Use um Keypad simples como "botão" do puzzle.
-        // Ele vai aparecer na localização do teapot de canto anormal
-        //room5->addObject(new Keypad({radius, 1.0f, radius}));
-
-        // A CHAVE_SALA_5 que o jogador obtém (escondida num item interativo)
-        // O KEYPAD (ou outro objeto interativo no local) deverá fornecer a chave
-        // quando a condição do puzzle for satisfeita (no seu código de lógica).
-        // Aqui apenas coloco um Keypad no local do teapot diferente.
-        // Se a chave for dropada, o jogador a pega.
-        room2->addObject(new Key({ radius, teapot_y, radius },
-                         {ItemType::CHAVE_SALA_1},
-                         "",
-                         true,{0.0f, 0.0f, 1.0f}
-                         )); // Posicionada em outro lugar para ser pega após a interacao
+        room2->addObject(new Sign({0.0f, 2.75f, -4.25f}, "Tres caminhos aguardam.O fogo tenta seduzir com brilho,o mar chama com profundezas, mas quem busca calma e crescimento segue onde a vida floresce."));
     }
     _rooms.push_back(room2);
 
-
-     Room* room3 = new Room();
+    // --- SALA 3 (ÍNDICE 2): COLETA DE CHAVES ---
+    Room* room3 = new Room();
     {
-        room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
-        const float wallHeight = 4.0f;
-        const float roomSize   = 5.0f;
-        const int indexPuzzle4 = 3;
-        room3->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
-        room3->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
-        room3->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
-        room3->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/628.jpg"));
-
-        // Portas no fundo (z = -4.6f aprox). Cores:
-        // Azul (correta), Vermelha (errada), Amarela (errada)
-        Vector3f RED   = {0.85f, 0.10f, 0.10f};
-        Vector3f CYAN  = {0.1f, 0.5f, 1.0f};  // brilho “oceano/céu”
-        Vector3f AMBER = {1.00f, 0.72f, 0.12f};  // brilho “sol”
-        Vector3f LIME  = {0.45f, 0.95f, 0.35f};  // brilho “montanha/terra”
-
-        // Esquerda: errada (SOL)
-        room3->addObject(new PuzzleDoor(
-            {-3.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Deadly,
-            RED,-1,
-            PuzzleDoor::Icon::None, AMBER
-        ));
-        // Centro: CORRETA (ONDA = oceano)
-        room3->addObject(new PuzzleDoor(
-            { 0.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Winning,
-            CYAN,-1,
-            PuzzleDoor::Icon::None, CYAN
-        ));
-        // Direita: errada (MONTANHA)
-        room3->addObject(new PuzzleDoor(
-            { 3.0f, 1.0f, -4.6f},
-            //PuzzleDoor::Mode::Deadly,
-            LIME,indexPuzzle4,
-            PuzzleDoor::Icon::None, LIME
-        ));
-
-        // Placa (mesma charada do oceano)
-        room3->addObject(new Sign({0.0f, 2.75f, -4.25f},
-          "Tres caminhos aguardam.O fogo tenta seduzir com brilho,o mar chama com profundezas, mas quem busca calma e crescimento segue onde a vida floresce."));
-    }
-    _rooms.push_back(room3);
-     Room* room4 = new Room();
-    {
-        // Estrutura
-        room4->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
+        room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
         const float wallHeight = 4.0f;
         const float roomSize   = 6.0f;
-        room4->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
-        room4->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
-        room4->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
-        room4->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
+        room3->addObject(new Wall({0.0f, wallHeight/2.0f, -roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
+        room3->addObject(new Wall({0.0f, wallHeight/2.0f,  roomSize}, {roomSize*2.0f, wallHeight, 0.5f},"Textures/1124.jpg"));
+        room3->addObject(new Wall({-roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
+        room3->addObject(new Wall({ roomSize,wallHeight/2.0f, 0.0f},   {0.5f, wallHeight, roomSize*2.0f},"Textures/1124.jpg"));
 
-        // Porta de Volta para Sala 4 (entrada)
-       // room2->addObject(new Door({0.0f, 1.0f, 5.5f}, 3, {0.0f, 1.0f, -3.5f}, ItemType::NENHUM));
+        // A porta requer as chaves vermelha (SALA_2) e azul (SALA_3)
+        room3->addObject(new Door({0.0f, 1.0f, -5.5f}, 3, {0.0f, spawnHeight, 8.5f}, {ItemType::CHAVE_SALA_2, ItemType::CHAVE_SALA_3}));
 
-        // Porta de Saída para Sala 6 (requer CHAVE_SALA_5)
-        room4->addObject(new Door({0.0f, 1.0f, -5.5f}, 4, {0.0f, 1.0f, 4.5f}, {ItemType::CHAVE_SALA_3,ItemType::CHAVE_SALA_2}));
+        float radius = 4.5f;
 
+        // Plataformas visuais para as chaves
+        room3->addObject(new PrimitiveObject(PrimitiveShape::CUBE, { 0.0f, 0.5f, radius }, {0.3f, 0.3f, 0.3f}, {1.0f, 1.0f, 1.0f}));
+        room3->addObject(new PrimitiveObject(PrimitiveShape::CUBE, { -radius, 0.75f, 0.0f }, {0.3f, 0.3f, 0.3f}, {1.0f, 1.5f, 1.0f}));
+        room3->addObject(new PrimitiveObject(PrimitiveShape::CUBE, { radius, 0.25f, 0.0f }, {0.3f, 0.3f, 0.3f}, {1.0f, 0.5f, 1.0f}));
 
-        // Crio 8 Teapots normais em círculo/quadrado
-        float teapot_y = 1.0f;
-        float radius = 3.5f;
+        // Chaves posicionadas em cima das plataformas
+        room3->addObject(new Key({ 0.0f, 1.5f, radius }, ItemType::CHAVE_SALA_4, "", false, {0.0f, 1.0f, 0.5f}));   // Chave Verde
+        room3->addObject(new Key({ -radius, 2.25f, 0.0f }, ItemType::CHAVE_SALA_3, "", false, {0.0f, 0.0f, 1.0f})); // Chave Azul
+        room3->addObject(new Key({ radius, 1.25f, 0.0f }, ItemType::CHAVE_SALA_2, "", false, {1.0f, 0.0f, 0.0f}));   // Chave Vermelha
 
-        // A Placa com a Dica
-        room4->addObject(new Sign({0.0f, 2.75f, -5.0f},
-          "Olhe atentamente para o que parece igual. A chave para o proximo passo esconde-se naquele que tem uma COR ou FORMA ligeiramente diferente."));
+        room3->addObject(new Sign({0.0f, 2.75f, -5.0f}, "A porta pede o fruto da uniao do fogo e do ceu. Colete as cores certas para provar seu valor."));
+    }
+    _rooms.push_back(room3);
 
-        // O objeto que o jogador deve interagir para obter a chave
-        // Use um Keypad simples como "botão" do puzzle.
-        // Ele vai aparecer na localização do teapot de canto anormal
-        //room5->addObject(new Keypad({radius, 1.0f, radius}));
+    // --- SALA 4 (ÍNDICE 3): PUZZLE FINAL DOS CUBOS ---
+    Room* room4 = new Room();
+    {
+        room4->addObject(new Floor({0.0f, 0.0f, 0.0f}, {20.0f, 20.0f}));
+        const float wallHeight = 5.0f;
+        const float roomSize = 10.0f;
+        room4->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room4->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f}, "Textures/628.jpg"));
+        room4->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}, "Textures/628.jpg"));
+        room4->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f}, "Textures/628.jpg"));
 
-        // A CHAVE_SALA_5 que o jogador obtém (escondida num item interativo)
-        // O KEYPAD (ou outro objeto interativo no local) deverá fornecer a chave
-        // quando a condição do puzzle for satisfeita (no seu código de lógica).
-        // Aqui apenas coloco um Keypad no local do teapot diferente.
-        // Se a chave for dropada, o jogador a pega.
-        room4->addObject(new Key({ 0.0f, teapot_y, radius },
-                         ItemType::CHAVE_SALA_4,
-                         "",false,{0.0f, 1.0f, 0.5f}
-                         ));
-        room4->addObject(new Key({ -radius, teapot_y, radius },
-                         ItemType::CHAVE_SALA_3,
-                         "",false,{0.0f, 0.0f, 1.0f}
-                         )); // Posicionada em outro lugar para ser pega após a interacao
-        room4->addObject(new Key({ radius, teapot_y, radius },
-                         ItemType::CHAVE_SALA_2,
-                         "",false,{1.0f, 0.0f, 0.0f}
-                         )); // Posicionada em outro lugar para ser pega após a interacao
+        // Pedestal visual para dar destaque ao puzzle
+        room4->addObject(new PrimitiveObject(PrimitiveShape::CUBE, {0.0f, 0.1f, 0.0f}, {0.1f, 0.1f, 0.1f}, {5.0f, 0.2f, 5.0f}));
+
+        // Puzzle dos cubos centralizado e em cima do pedestal
+        CubePuzzle* puzzle = new CubePuzzle(2, 2, {-1.0f, 0.7f, -1.0f}, 2.0f, 1.0f, PuzzleID::Sala_Cubos);
+        room4->addObject(puzzle);
+        const auto& cubes = puzzle->getCubes();
+        for (int i = 0; i < 2; ++i)
+            for (int j = 0; j < 2; ++j)
+                room4->addObject(cubes[i][j]);
+
+        // Porta da vitória que leva para a sala de índice 4
+        room4->addObject(new Door({0.0f, 1.0f, -9.5f}, 4, {0.0f, spawnHeight, 4.5f}, PuzzleID::Sala_Cubos));
+        room4->addObject(new Sign({0.0f, 2.75f, -9.4f}, "O desafio final. A ordem precede a vitoria. Encontre a harmonia."));
     }
     _rooms.push_back(room4);
 
-    // --- CRIAÇÃO DA SALA 6 (Saída) ---
+    // --- SALA 5 (ÍNDICE 4): VITÓRIA ---
     Room* room5 = new Room();
     {
-        // ... (Estrutura da Sala 6 - Sala Final ou próxima fase) ...
         room5->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
         const float wallHeight = 4.0f;
         const float roomSize = 6.0f;
-        room5->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
-        room5->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/images.jpg"));
-        room5->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/images.jpg"));
-        room5->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/images.jpg"));
+        room5->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/festa.jpg"));
+        room5->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/festa.jpg"));
+        room5->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/festa.jpg"));
+        room5->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/festa.jpg"));
 
-        //room3->addObject(new Door({0.0f, 1.0f, 2.0f}, 4, {0.0f, 1.0f, -4.5f}, ItemType::NENHUM)); // Volta para Sala 5
-
-        room5->addObject(new Sign({0.0f, 0.75f, -6.5f}, "PARABENS! Voce escapou! (Fim da Demo)"));
+        room5->addObject(new Sign({0.0f, 1.5f, 0.0f}, "PARABENS! Voce escapou!"));
     }
     _rooms.push_back(room5);
 
+    // --- SALA 6 (ÍNDICE 5): PENALIDADE / GAME OVER ---
+    Room* room6 = new Room();
+    {
+        room6->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
+        const float wallHeight = 4.0f;
+        const float roomSize = 6.0f;
+        room6->addObject(new Wall({0.0f, wallHeight / 2.0f, -roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/game_over.jpg"));
+        room6->addObject(new Wall({0.0f, wallHeight / 2.0f, roomSize}, {roomSize * 2.0f, wallHeight, 0.5f},"../Textures/game_over.jpg"));
+        room6->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/game_over.jpg"));
+        room6->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/game_over.jpg"));
 
+        // Porta para voltar ao início do jogo (sala de índice 0)
+        room6->addObject(new Door({0.0f, 1.0f, 5.5f}, 0, {0.0f, spawnHeight, 4.0f}));
+        room6->addObject(new Sign({0.0f, 1.5f, -5.0f}, "Uma escolha errada te trouxe aqui. Tente novamente."));
+    }
+    _rooms.push_back(room6);
 
-    // Início na Sala 1
+    // Início do jogo na Sala 1
     if (!_rooms.empty()) {
         _currentRoomIndex = 0;
+        player.setPosition({0.0f, spawnHeight, 4.0f}); // Posição inicial do jogador no jogo
     }
 }
 
-void SceneManager::setActiveRoom(int index){
-    if(index>=0 && index<(int)_rooms.size()){
-        _activeRoom = index;
+void SceneManager::setActiveRoom(int index) {
+    if(index >= 0 && index < (int)_rooms.size()) {
+        _currentRoomIndex = index;
     }
 }
 
-void SceneManager::switchToRoom(int roomIndex, Player& player) {
+void SceneManager::switchToRoom(int roomIndex, Player& player, const Vector3f& spawnPosition) {
     if (roomIndex >= 0 && (unsigned int)roomIndex < _rooms.size()) {
         _currentRoomIndex = roomIndex;
-        // Define a posição inicial do jogador na nova sala
-        player.setPosition(_rooms[_currentRoomIndex]->getSpawnPoint());
+        player.setPosition(spawnPosition);
         std::cout << "MUDOU PARA A SALA " << roomIndex << std::endl;
     }
 }
+
 void SceneManager::update(float deltaTime, GameStateManager& gameStateManager) {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->update(deltaTime, gameStateManager);
     }
 }
+
 void SceneManager::render() {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->render();
     }
 }
+
 std::vector<InteractableObject*>& SceneManager::getInteractableObjects() {
     return _rooms[_currentRoomIndex]->getInteractableObjects();
 }
+
 const std::vector<GameObject*>& SceneManager::getCurrentRoomObjects() const {
     return _rooms[_currentRoomIndex]->getObjects();
 }

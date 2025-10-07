@@ -2,14 +2,12 @@
 #define PLAYER_H
 
 #include "FPSCamera.h"
-#include "GameObject.h" // Precisa saber o que é um GameObject para o update
-#include "GameStateManager.h" // E o GameStateManager
+#include "GameObject.h"
+#include "GameStateManager.h"
 #include <map>
 #include <vector>
 
-// --- ADICIONE A DECLARAÇÃO DA FUNÇÃO AQUI ---
-    // Isso torna a função visível para qualquer arquivo que inclua "Player.h"
-    bool checkCollision(const BoundingBox& a, const BoundingBox& b);
+bool checkCollision(const BoundingBox& a, const BoundingBox& b);
 
 class Player {
 public:
@@ -19,7 +17,6 @@ public:
     void handleKeyUp(unsigned char key);
     void handleMouseMotion(int x, int y);
 
-    // Assinatura ATUALIZADA para receber a lista de objetos da sala
     void update(float deltaTime, const std::vector<GameObject*>& objects, GameStateManager& gameStateManager);
 
     void setPosition(const Vector3f& pos);
@@ -27,7 +24,7 @@ public:
     BoundingBox getBoundingBox() const;
 
 private:
-    Vector3f _position;
+    Vector3f _position; // A única variável de posição para o corpo E a câmera
     FPSCamera _camera;
     float _movementSpeed;
     float _collisionRadius;

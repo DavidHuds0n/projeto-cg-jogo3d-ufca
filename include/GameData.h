@@ -5,7 +5,7 @@
 
 // Enum para todos os itens que o jogador pode coletar
 enum class ItemType {
-    NENHUM,               // Representa a ausência de um item
+    NENHUM,               // Representa a ausï¿½ncia de um item
 
     // Chaves para progredir entre as salas
     CHAVE_SALA_1,         // Abre a porta da Sala 1 para a 2
@@ -13,16 +13,17 @@ enum class ItemType {
     CHAVE_SALA_3,
     CHAVE_SALA_4,
 
-    // Itens de puzzle específicos
+    // Itens de puzzle especï¿½ficos
     FORMA_ESFERA,
     FORMA_CUBO,
     FORMA_PIRAMIDE
 };
-// Identificadores únicos para cada puzzle
+// Identificadores ï¿½nicos para cada puzzle
 namespace PuzzleID {
     const std::string Sala1_CodigoCaixa = "S1_CodigoCaixa";
     const std::string Sala2_FormasEncaixadas = "S2_FormasEncaixadas";
     const std::string Sala3_SequenciaBotoes = "S3_SequenciaBotoes";
+    const std::string Sala_Cubos = "S_Cubos";
 }
 
 #endif // GAMEDATA_H
