@@ -126,7 +126,7 @@ void CubePuzzle::onCubeClicked(int row, int col) {
 void CubePuzzle::checkSolution(GameStateManager& gameStateManager) {
     for (auto& row : _cubes)
         for (auto* cube : row)
-            if (cube->getRotationState() != 0)
+            if (cube->getRotationState() != 0.0f)
                 return;
     // Se chegou aqui, está resolvido
     if (!_solved) {

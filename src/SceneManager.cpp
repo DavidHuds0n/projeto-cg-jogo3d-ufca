@@ -1,6 +1,6 @@
 /**
  * @file SceneManager.cpp
- * @brief Implementação da classe SceneManager, responsável por gerenciar as diferentes salas do jogo.
+ * @brief Implementaï¿½ï¿½o da classe SceneManager, responsï¿½vel por gerenciar as diferentes salas do jogo.
  */
 
 // Includes para todos os objetos
@@ -23,7 +23,7 @@
 /**
  * @brief Construtor da classe SceneManager.
  *
- * Inicializa o índice da sala atual para um valor inválido (-1).
+ * Inicializa o ï¿½ndice da sala atual para um valor invï¿½lido (-1).
  */
 SceneManager::SceneManager() {
     _currentRoomIndex = -1;
@@ -32,7 +32,7 @@ SceneManager::SceneManager() {
 /**
  * @brief Destrutor da classe SceneManager.
  *
- * Itera sobre o vetor de salas e deleta cada instância de `Room`, liberando a memória alocada.
+ * Itera sobre o vetor de salas e deleta cada instï¿½ncia de `Room`, liberando a memï¿½ria alocada.
  */
 SceneManager::~SceneManager() {
     for (Room* room : _rooms) {
@@ -42,19 +42,19 @@ SceneManager::~SceneManager() {
 }
 
 /**
- * @brief Inicializa as salas do jogo e a posição inicial do jogador.
+ * @brief Inicializa as salas do jogo e a posiï¿½ï¿½o inicial do jogador.
  *
- * Este método cria todas as salas do jogo, adiciona objetos a cada uma
- * e define a sala de início e a posição inicial do jogador.
+ * Este mï¿½todo cria todas as salas do jogo, adiciona objetos a cada uma
+ * e define a sala de inï¿½cio e a posiï¿½ï¿½o inicial do jogador.
  *
- * @param player A instância do jogador.
+ * @param player A instï¿½ncia do jogador.
  */
 void SceneManager::init(Player& player) {
     _player = &player;
-    const int penaltyRoomIndex = 5; // Índice da sala de "Game Over"
-    const float spawnHeight = 1.6f; // Altura padrão consistente para o spawn do jogador
+    const int penaltyRoomIndex = 5; // ï¿½ndice da sala de "Game Over"
+    const float spawnHeight = 1.6f; // Altura padrï¿½o consistente para o spawn do jogador
 
-    // --- SALA 1 (ÍNDICE 0): PUZZLE DAS PORTAS COM ÍCONES ---
+    // --- SALA 1 (ï¿½NDICE 0): PUZZLE DAS PORTAS COM ï¿½CONES ---
     Room* room1 = new Room();
     {
         room1->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
@@ -70,7 +70,7 @@ void SceneManager::init(Player& player) {
         Vector3f AMBER = {1.00f, 0.72f, 0.12f};
         Vector3f LIME  = {0.45f, 0.95f, 0.35f};
 
-        // Portas erradas levam à sala de penalidade. A correta leva para a próxima sala (índice 1).
+        // Portas erradas levam ï¿½ sala de penalidade. A correta leva para a prï¿½xima sala (ï¿½ndice 1).
         room1->addObject(new PuzzleDoor({-3.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, RED, PuzzleDoor::Icon::Sun, AMBER));
         room1->addObject(new PuzzleDoor({ 0.0f, 1.0f, -4.6f}, penaltyRoomIndex, {0.0f, spawnHeight, 4.0f}, RED, PuzzleDoor::Icon::Wave, CYAN));
         room1->addObject(new PuzzleDoor({ 3.0f, 1.0f, -4.6f}, 1, {0.0f, spawnHeight, 4.5f}, RED, PuzzleDoor::Icon::Mountain, LIME)); // CORRETA
@@ -79,7 +79,7 @@ void SceneManager::init(Player& player) {
     }
     _rooms.push_back(room1);
 
-    // --- SALA 2 (ÍNDICE 1): PUZZLE DAS PORTAS COLORIDAS ---
+    // --- SALA 2 (ï¿½NDICE 1): PUZZLE DAS PORTAS COLORIDAS ---
     Room* room2 = new Room();
     {
         room2->addObject(new Floor({0.0f, 0.0f, 0.0f}, {10.0f, 10.0f}));
@@ -103,7 +103,7 @@ void SceneManager::init(Player& player) {
     }
     _rooms.push_back(room2);
 
-    // --- SALA 3 (ÍNDICE 2): COLETA DE CHAVES ---
+    // --- SALA 3 (ï¿½NDICE 2): COLETA DE CHAVES ---
     Room* room3 = new Room();
     {
         room3->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
@@ -133,7 +133,7 @@ void SceneManager::init(Player& player) {
     }
     _rooms.push_back(room3);
 
-    // --- SALA 4 (ÍNDICE 3): PUZZLE FINAL DOS CUBOS ---
+    // --- SALA 4 (ï¿½NDICE 3): PUZZLE FINAL DOS CUBOS ---
     Room* room4 = new Room();
     {
         room4->addObject(new Floor({0.0f, 0.0f, 0.0f}, {20.0f, 20.0f}));
@@ -151,17 +151,18 @@ void SceneManager::init(Player& player) {
         CubePuzzle* puzzle = new CubePuzzle(2, 2, {-1.0f, 0.7f, -1.0f}, 2.0f, 1.0f, PuzzleID::Sala_Cubos);
         room4->addObject(puzzle);
         const auto& cubes = puzzle->getCubes();
+
         for (int i = 0; i < 2; ++i)
             for (int j = 0; j < 2; ++j)
                 room4->addObject(cubes[i][j]);
 
-        // Porta da vitória que leva para a sala de índice 4
+        // Porta da vitï¿½ria que leva para a sala de ï¿½ndice 4
         room4->addObject(new Door({0.0f, 1.0f, -9.5f}, 4, {0.0f, spawnHeight, 4.5f}, PuzzleID::Sala_Cubos));
         room4->addObject(new Sign({0.0f, 2.75f, -9.4f}, "O desafio final. A ordem precede a vitoria. Encontre a harmonia."));
     }
     _rooms.push_back(room4);
 
-    // --- SALA 5 (ÍNDICE 4): VITÓRIA ---
+    // --- SALA 5 (ï¿½NDICE 4): VITï¿½RIA ---
     Room* room5 = new Room();
     {
         room5->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
@@ -176,7 +177,7 @@ void SceneManager::init(Player& player) {
     }
     _rooms.push_back(room5);
 
-    // --- SALA 6 (ÍNDICE 5): PENALIDADE / GAME OVER ---
+    // --- SALA 6 (ï¿½NDICE 5): PENALIDADE / GAME OVER ---
     Room* room6 = new Room();
     {
         room6->addObject(new Floor({0.0f, 0.0f, 0.0f}, {12.0f, 12.0f}));
@@ -187,22 +188,22 @@ void SceneManager::init(Player& player) {
         room6->addObject(new Wall({-roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/game_over.jpg"));
         room6->addObject(new Wall({roomSize, wallHeight / 2.0f, 0.0f}, {0.5f, wallHeight, roomSize * 2.0f},"../Textures/game_over.jpg"));
 
-        // Porta para voltar ao início do jogo (sala de índice 0)
+        // Porta para voltar ao inï¿½cio do jogo (sala de ï¿½ndice 0)
         room6->addObject(new Door({0.0f, 1.0f, 5.5f}, 0, {0.0f, spawnHeight, 4.0f}));
         room6->addObject(new Sign({0.0f, 1.5f, -5.0f}, "Uma escolha errada te trouxe aqui. Tente novamente."));
     }
     _rooms.push_back(room6);
 
-    // Início do jogo na Sala 1
+    // Inï¿½cio do jogo na Sala 1
     if (!_rooms.empty()) {
         _currentRoomIndex = 0;
-        player.setPosition({0.0f, spawnHeight, 4.0f}); // Posição inicial do jogador no jogo
+        player.setPosition({0.0f, spawnHeight, 4.0f}); // Posiï¿½ï¿½o inicial do jogador no jogo
     }
 }
 
 /**
- * @brief Define a sala ativa pelo seu índice.
- * @param index O índice da sala para se tornar ativa.
+ * @brief Define a sala ativa pelo seu ï¿½ndice.
+ * @param index O ï¿½ndice da sala para se tornar ativa.
  */
 void SceneManager::setActiveRoom(int index) {
     if(index >= 0 && index < (int)_rooms.size()) {
@@ -211,14 +212,14 @@ void SceneManager::setActiveRoom(int index) {
 }
 
 /**
- * @brief Muda a sala atual e teletransporta o jogador para uma nova posição.
+ * @brief Muda a sala atual e teletransporta o jogador para uma nova posiï¿½ï¿½o.
  *
- * Atualiza o índice da sala atual e ajusta a posição do jogador para a
- * posição de spawn especificada.
+ * Atualiza o ï¿½ndice da sala atual e ajusta a posiï¿½ï¿½o do jogador para a
+ * posiï¿½ï¿½o de spawn especificada.
  *
- * @param roomIndex O índice da nova sala.
- * @param player A instância do jogador.
- * @param spawnPosition A nova posição do jogador.
+ * @param roomIndex O ï¿½ndice da nova sala.
+ * @param player A instï¿½ncia do jogador.
+ * @param spawnPosition A nova posiï¿½ï¿½o do jogador.
  */
 void SceneManager::switchToRoom(int roomIndex, Player& player, const Vector3f& spawnPosition) {
     if (roomIndex >= 0 && (unsigned int)roomIndex < _rooms.size()) {
@@ -231,9 +232,9 @@ void SceneManager::switchToRoom(int roomIndex, Player& player, const Vector3f& s
 /**
  * @brief Atualiza a sala ativa.
  *
- * Chama o método `update` da sala atual, delegando a atualização de seus objetos.
+ * Chama o mï¿½todo `update` da sala atual, delegando a atualizaï¿½ï¿½o de seus objetos.
  *
- * @param deltaTime O tempo decorrido desde o último quadro.
+ * @param deltaTime O tempo decorrido desde o ï¿½ltimo quadro.
  * @param gameStateManager O gerenciador de estado do jogo.
  */
 void SceneManager::update(float deltaTime, GameStateManager& gameStateManager) {
@@ -245,7 +246,7 @@ void SceneManager::update(float deltaTime, GameStateManager& gameStateManager) {
 /**
  * @brief Renderiza a sala ativa.
  *
- * Chama o método `render` da sala atual, delegando o desenho de seus objetos.
+ * Chama o mï¿½todo `render` da sala atual, delegando o desenho de seus objetos.
  */
 void SceneManager::render() {
     if (_currentRoomIndex != -1) {
@@ -254,16 +255,16 @@ void SceneManager::render() {
 }
 
 /**
- * @brief Obtém os objetos interativos da sala ativa.
- * @return Uma referência para o vetor de objetos interativos da sala.
+ * @brief Obtï¿½m os objetos interativos da sala ativa.
+ * @return Uma referï¿½ncia para o vetor de objetos interativos da sala.
  */
 std::vector<InteractableObject*>& SceneManager::getInteractableObjects() {
     return _rooms[_currentRoomIndex]->getInteractableObjects();
 }
 
 /**
- * @brief Obtém todos os objetos da sala ativa.
- * @return Uma referência constante para o vetor de objetos da sala.
+ * @brief Obtï¿½m todos os objetos da sala ativa.
+ * @return Uma referï¿½ncia constante para o vetor de objetos da sala.
  */
 const std::vector<GameObject*>& SceneManager::getCurrentRoomObjects() const {
     return _rooms[_currentRoomIndex]->getObjects();
