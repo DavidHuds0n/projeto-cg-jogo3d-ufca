@@ -21,6 +21,7 @@
  * @param col A coluna do cubo na grade do quebra-cabeça.
  * @param puzzleManager Um ponteiro para o gerenciador do quebra-cabeça.
  */
+ /*
 RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
     : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
 
@@ -38,6 +39,21 @@ RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int co
     _currentPosition = position;
     _targetPosition = position;
 }
+*/
+
+
+RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
+    : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
+
+    // --- CÓDIGO PARA RESOLVER O PUZZLE INSTANTANEAMENTE ---
+    _rotationState = 0;
+
+    _currentAngle = _rotationState * 90.0f;
+    _targetAngle = _currentAngle;
+    _currentPosition = position;
+    _targetPosition = position;
+}
+
 
 /**
  * @brief Atualiza o estado do cubo a cada quadro.

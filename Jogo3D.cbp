@@ -76,7 +76,6 @@
 		<Unit filename="include/Wall.h" />
 		<Unit filename="include/stb_image.h" />
 		<Unit filename="res/levels/maze.txt" />
-		<Unit filename="src/CollectableShape.cpp" />
 		<Unit filename="src/ControlPanel.cpp" />
 		<Unit filename="src/CubePuzzle.cpp" />
 		<Unit filename="src/Door.cpp" />
@@ -87,15 +86,12 @@
 		<Unit filename="src/Key.cpp" />
 		<Unit filename="src/Keypad.cpp" />
 		<Unit filename="src/LightManager.cpp" />
-		<Unit filename="src/MovableVase.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/PrimitiveObject.cpp" />
 		<Unit filename="src/PuzzleDoor.cpp" />
 		<Unit filename="src/Room.cpp" />
 		<Unit filename="src/RotatingCube.cpp" />
 		<Unit filename="src/SceneManager.cpp" />
-		<Unit filename="src/SequenceButton.cpp" />
-		<Unit filename="src/ShapeSocket.cpp" />
 		<Unit filename="src/Sign.cpp" />
 		<Unit filename="src/TestButton.cpp" />
 		<Unit filename="src/TextureManager.cpp" />
