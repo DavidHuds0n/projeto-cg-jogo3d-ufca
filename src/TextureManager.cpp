@@ -1,5 +1,14 @@
-// ===== TextureManager.cpp (versão sem <filesystem>) =====
-#define STB_IMAGE_IMPLEMENTATION      // garanta que só este .cpp define isso
+/**
+ * @file TextureManager.cpp
+ * @brief Implementação da classe TextureManager, responsável por carregar e gerenciar texturas.
+ *
+ * Este arquivo utiliza a biblioteca stb_image para carregar arquivos de imagem
+ * e o OpenGL para criar as texturas, gerenciando um cache interno para evitar
+ * recargas desnecessárias.
+ */
+
+// Define a implementação da biblioteca stb_image.
+#define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
 
 #include "../include/TextureManager.h"
@@ -11,14 +20,36 @@
 #include <vector>
 #include <unordered_map>
 
+/**
+ * @brief Um mapa estático para armazenar as texturas carregadas em cache.
+ *
+ * A chave é o nome do arquivo da textura e o valor é o identificador OpenGL da textura (GLuint).
+ */
 std::unordered_map<std::string, GLuint> TextureManager::_textures;
-// Checa existência de arquivo de forma portátil (sem <filesystem>)
+
+/**
+ * @brief Checa a existência de um arquivo de forma portátil.
+ *
+ * Este método tenta abrir o arquivo para leitura para verificar sua existência,
+ * sem depender de bibliotecas modernas como `<filesystem>`.
+ *
+ * @param path O caminho do arquivo a ser verificado.
+ * @return Retorna 'true' se o arquivo existir, 'false' caso contrário.
+ */
 static bool fileExists(const std::string& path) {
     FILE* f = fopen(path.c_str(), "rb");
     if (f) { fclose(f); return true; }
     return false;
 }
 
+/**
+ * @brief Extrai o nome do arquivo de um caminho completo.
+ *
+ * Localiza a última ocorrência de '/' ou '\\' no caminho para isolar o nome do arquivo.
+ *
+ * @param p O caminho completo do arquivo.
+ * @return O nome do arquivo (ex: "imagem.jpg").
+ */
 static std::string leafName(const std::string& p) {
     size_t s1 = p.find_last_of('/');
     size_t s2 = p.find_last_of('\\');
@@ -26,16 +57,23 @@ static std::string leafName(const std::string& p) {
     return (s == std::string::npos) ? p : p.substr(s + 1);
 }
 
-// Tenta vários caminhos relativos comuns (bin/Debug, bin/Release, raiz do projeto, etc.)
+/**
+ * @brief Tenta resolver o caminho de um arquivo de textura.
+ *
+ * O método tenta vários caminhos relativos comuns para localizar o arquivo,
+ * facilitando a portabilidade entre diferentes estruturas de projeto.
+ *
+ * @param requested O caminho original da textura.
+ * @return O caminho de arquivo válido se encontrado, uma string vazia caso contrário.
+ */
 static std::string resolveTexturePath(const std::string& requested) {
     const std::string leaf = leafName(requested);
 
-    // se já veio um caminho com subpastas, tente primeiro como está e com "./"
+    // Tenta caminhos comuns
     std::vector<std::string> tries = {
         requested,
         "./" + requested,
 
-        // apenas o nome do arquivo dentro de "Textures/"
         "Textures/" + leaf,
         "./Textures/" + leaf,
         "../Textures/" + leaf,
@@ -53,6 +91,15 @@ static std::string resolveTexturePath(const std::string& requested) {
     return {};
 }
 
+/**
+ * @brief Carrega uma textura a partir de um arquivo e a armazena em cache.
+ *
+ * Se a textura já foi carregada, retorna seu identificador do cache. Caso contrário,
+ * ela é carregada do disco, configurada para o OpenGL e adicionada ao cache.
+ *
+ * @param filename O nome do arquivo da textura.
+ * @return O identificador OpenGL da textura (GLuint) ou 0 em caso de falha.
+ */
 GLuint TextureManager::loadTexture(const std::string& filename) {
     // cache: se já carregou, retorna
     auto it = _textures.find(filename);
@@ -65,7 +112,7 @@ GLuint TextureManager::loadTexture(const std::string& filename) {
         return 0;
     }
 
-    // evita textura invertida (muito comum com stb_image)
+    // evita textura invertida
     stbi_set_flip_vertically_on_load(1);
 
     int width = 0, height = 0, channels = 0;

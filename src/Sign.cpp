@@ -1,18 +1,28 @@
+/**
+ * @file Sign.cpp
+ * @brief Implementação da classe Sign, que representa uma placa de madeira com texto.
+ */
 #include "../include/Sign.h"
 #include <GL/freeglut.h>
 
-#include <sstream>    // istringstream
-#include <algorithm>  // std::max
+#include <sstream>   // istringstream
+#include <algorithm> // std::max
 #include <vector>
 #include <string>
 #include <cctype>
 #include <cmath>
 
 // =======================
-// VISUAL DA PLACA (ripado)
+// VISUAL DA PLACA
 // =======================
 
-// corda simples (cilindro)
+/**
+ * @brief Desenha uma corda simples como um cilindro.
+ * @param x A coordenada x do topo da corda.
+ * @param yTop A coordenada y do topo da corda.
+ * @param z A coordenada z do topo da corda.
+ * @param length O comprimento da corda.
+ */
 static void drawRope(float x, float yTop, float z, float length) {
     GLUquadric* q = gluNewQuadric();
     glColor3f(0.55f, 0.38f, 0.20f);
@@ -24,17 +34,27 @@ static void drawRope(float x, float yTop, float z, float length) {
     gluDeleteQuadric(q);
 }
 
-// placa de madeira ripada
+/**
+ * @brief Desenha a placa de madeira com ripas e cordas.
+ *
+ * A placa é composta por múltiplas tábuas horizontais com uma leve variação de cor.
+ * É desenhada com as cordas para pendurar.
+ *
+ * @param pos A posição do centro da placa.
+ * @param width A largura total da placa.
+ * @param height A altura total da placa.
+ * @param thick A espessura da placa.
+ */
 static void drawWoodBoard(const Vector3f& pos, float width=2.9f, float height=1.25f, float thick=0.10f) {
     glDisable(GL_LIGHTING);
     glPushMatrix();
     glTranslatef(pos.x, pos.y, pos.z);
 
-    // cordas (penduradas do "teto")
+    // cordas
     drawRope(-width*0.35f, 2.3f, 0.0f, 0.8f);
     drawRope( width*0.35f, 2.3f, 0.0f, 0.8f);
 
-    // tábuas (5 ripas horizontais com leve variação de cor)
+    // tábuas
     int boards = 5;
     float h = height / boards;
     for (int i=0;i<boards;i++){
@@ -55,12 +75,26 @@ static void drawWoodBoard(const Vector3f& pos, float width=2.9f, float height=1.
 // HELPERS de TEXTO
 // ===============
 
-// largura da string na fonte stroke (unidades GLUT)
+/**
+ * @brief Calcula a largura de uma string na fonte GLUT_STROKE_ROMAN.
+ * @param s A string a ser medida.
+ * @return A largura da string em unidades de stroke.
+ */
 static int strokeWidth(const std::string& s) {
     int w = 0; for (unsigned char c : s) w += glutStrokeWidth(GLUT_STROKE_ROMAN, c); return w;
 }
 
-// quebra texto respeitando largura máxima (em unidades stroke)
+/**
+ * @brief Quebra uma string de texto em linhas, respeitando uma largura máxima.
+ *
+ * A função quebra o texto em linhas para que caiba em uma largura predefinida,
+ * priorizando quebras entre palavras, mas também quebrando palavras longas
+ * se necessário.
+ *
+ * @param text O texto a ser quebrado.
+ * @param maxWidthStroke A largura máxima da linha em unidades de stroke.
+ * @return Um vetor de strings, onde cada string é uma linha de texto.
+ */
 static std::vector<std::string> wrapStroke(const std::string& text, int maxWidthStroke) {
     std::istringstream iss(text);
     std::string word, line;
@@ -89,7 +123,19 @@ static std::vector<std::string> wrapStroke(const std::string& text, int maxWidth
     return out;
 }
 
-// desenha UMA linha centralizada em (cx,cy,cz)
+/**
+ * @brief Desenha uma única linha de texto centralizada.
+ *
+ * Desenha o texto com a fonte GLUT_STROKE_ROMAN e aplica um efeito de
+ * "negrito" desenhando a linha múltiplas vezes com um pequeno deslocamento.
+ *
+ * @param s A string a ser desenhada.
+ * @param cx A coordenada x do centro horizontal.
+ * @param cy A coordenada y do centro vertical.
+ * @param cz A coordenada z.
+ * @param scale O fator de escala do texto.
+ * @param rgb Um array de 3 floats para a cor do texto.
+ */
 static void drawStrokeCenteredLine(const std::string& s,
                                    float cx, float cy, float cz,
                                    float scale, const float rgb[3]) {
@@ -97,7 +143,7 @@ static void drawStrokeCenteredLine(const std::string& s,
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
 
-    // cor e espessura do traço (mais grosso para "negrito")
+    // cor e espessura do traço
     glColor3f(rgb[0], rgb[1], rgb[2]);
     glLineWidth(1.5f);
 
@@ -107,7 +153,7 @@ static void drawStrokeCenteredLine(const std::string& s,
     float z = cz + 0.065f; // à frente da madeira
 
     // desenha 3 passadas com micro-offset para reforçar o contraste
-    const float off = 0.0007f;  // ajuste fino (em unidades de mundo)
+    const float off = 0.0007f;
     for (int pass = 0; pass < 3; ++pass) {
         float ox = (pass == 1 ? off : 0.0f);
         float oy = (pass == 2 ? off : 0.0f);
@@ -126,11 +172,22 @@ static void drawStrokeCenteredLine(const std::string& s,
 // Sign (impl.)
 // =======================
 
+/**
+ * @brief Construtor da classe Sign.
+ * @param pos A posição da placa.
+ * @param text A string de texto a ser exibida.
+ */
 Sign::Sign(const Vector3f& pos, const std::string& text)
 : InteractableObject(pos), _pos(pos), _text(text) {}
 
+/**
+ * @brief Renderiza a placa e o texto na tela.
+ *
+ * O método desenha a base de madeira e, em seguida, quebra e desenha o texto
+ * de forma que ele se ajuste à placa.
+ */
 void Sign::render() {
-    // dimensões da placa (use as mesmas sempre)
+    // dimensões da placa
     const float BOARD_W = 3.0f;
     const float BOARD_H = 1.30f;
     const float THICK   = 0.10f;
@@ -139,11 +196,11 @@ void Sign::render() {
     // desenha a madeira
     drawWoodBoard(_pos, BOARD_W, BOARD_H, THICK);
 
-    // centros das 5 tábuas em coordenadas de mundo (i=0 topo, i=4 base)
+    // centros das 5 tábuas em coordenadas de mundo
     std::vector<float> yCenter(BOARDS);
     {
-        const float yMid = _pos.y + 1.5f;     // centro geométrico da placa
-        const float step = BOARD_H / BOARDS;  // altura de cada tábua
+        const float yMid = _pos.y + 1.5f;
+        const float step = BOARD_H / BOARDS;
         for (int i = 0; i < BOARDS; ++i) {
             float top    =  (BOARD_H*0.5f) - i*step;
             float bottom =  top - step;
@@ -179,7 +236,7 @@ void Sign::render() {
 
     // auto-fit final: garante que a maior linha caiba na largura útil
     int wmax = 1; for (auto &s : wrapped) wmax = std::max(wmax, strokeWidth(s));
-    float scaleFit   = usableW / float(wmax);
+    float scaleFit     = usableW / float(wmax);
     float finalScale = std::min(baseScale, scaleFit);
 
     // cor do texto
@@ -188,7 +245,7 @@ void Sign::render() {
     // desenha centralizado: usa as tábuas do MEIO quando houver < 5 linhas
     const int linesToDraw = std::min((int)wrapped.size(), BOARDS);
     int startBoard = (BOARDS - linesToDraw) / 2;
-    const float TOP_NUDGE = 0.030f;             // ~3 cm para baixo (ajuste fino)
+    const float TOP_NUDGE = 0.030f;
 
     for (int i = 0; i < linesToDraw; ++i) {
         int boardIndex = startBoard + i;

@@ -1,7 +1,8 @@
 /**
  * @file Game.cpp
- * @brief Implementação da classe principal Game.
+ * @brief Implementação da classe principal Game, que gerencia o estado e o loop do jogo.
  */
+
 #include "../include/Game.h"
 #include "../include/Config.h"
 #include "../include/Ray.h"
@@ -18,7 +19,12 @@
 #include <vector>
 
 // --- FUNÇÕES AUXILIARES ESTÁTICAS ---
-// Mantemos a função de desenhar texto da branch main
+/**
+ * @brief Desenha texto centralizado na tela.
+ * @param msg A string de caracteres a ser desenhada.
+ * @param x A coordenada X do centro do texto.
+ * @param y A coordenada Y do centro do texto.
+ */
 static void drawCenteredBitmapText(const char* msg, float x, float y) {
     glRasterPos2f(x, y);
     for (const char* p = msg; *p; ++p) {
@@ -27,6 +33,17 @@ static void drawCenteredBitmapText(const char* msg, float x, float y) {
 }
 
 // --- FUNÇÕES AUXILIARES DE RAY CASTING ---
+/**
+ * @brief Calcula um raio a partir da posição da câmera na tela.
+ *
+ * Utiliza as matrizes de projeção e modelview do OpenGL para "des-projetar"
+ * as coordenadas 2D do mouse para o espaço 3D, criando um vetor de direção para o raio.
+ *
+ * @param mouseX A coordenada X do mouse na tela.
+ * @param mouseY A coordenada Y do mouse na tela.
+ * @param player A instância do jogador, para obter a posição da câmera.
+ * @return Um objeto Ray contendo a origem e a direção.
+ */
 Ray calculateMouseRay(int mouseX, int mouseY, Player& player) {
     GLdouble modelviewMatrix[16];
     GLdouble projectionMatrix[16];
@@ -59,6 +76,17 @@ Ray calculateMouseRay(int mouseX, int mouseY, Player& player) {
     return {player.getCamera().getPosition(), rayDirection};
 }
 
+/**
+ * @brief Calcula a interseção de um raio com uma esfera.
+ *
+ * Utiliza uma fórmula quadrática para determinar se e a que distância
+ * o raio colide com a superfície da esfera.
+ *
+ * @param ray O raio a ser testado.
+ * @param sphereCenter A posição central da esfera.
+ * @param sphereRadius O raio da esfera.
+ * @return A distância até o ponto de colisão mais próximo, ou -1.0f se não houver colisão.
+ */
 float rayIntersectsSphere(const Ray& ray, const Vector3f& sphereCenter, float sphereRadius) {
     Vector3f oc = {
         ray.origin.x - sphereCenter.x,
@@ -79,10 +107,21 @@ float rayIntersectsSphere(const Ray& ray, const Vector3f& sphereCenter, float sp
 
 // --- IMPLEMENTAÇÃO DA CLASSE GAME ---
 
+/**
+ * @brief Construtor da classe Game.
+ *
+ * Inicializa o estado do jogo para PLAYING.
+ */
 Game::Game() {
     _currentState = PLAYING;
 }
 
+/**
+ * @brief Inicializa as configurações do OpenGL e os componentes do jogo.
+ *
+ * Configura o viewport, a projeção, a iluminação e as matrizes de cor.
+ * Em seguida, inicializa o gerenciador de luzes e de cena.
+ */
 void Game::init() {
     glClearColor(Config::SKYBOX_R, Config::SKYBOX_G, Config::SKYBOX_B, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -103,22 +142,36 @@ void Game::init() {
     glLoadIdentity();
 
     _lightManager.init();
-    // A chamada de init do sceneManager provavelmente foi alterada na branch main
     _sceneManager.init(_player);
 }
 
+/**
+ * @brief Atualiza o estado do jogo a cada quadro.
+ *
+ * Se o jogo estiver em estado PLAYING, atualiza a lógica do jogador,
+ * do gerenciador de cena e da luz da lanterna.
+ *
+ * @param deltaTime O tempo decorrido desde o último quadro.
+ */
 void Game::update(float deltaTime) {
     if (_currentState == PLAYING) {
         _player.update(deltaTime, _sceneManager.getCurrentRoomObjects(), _gameStateManager);
         _sceneManager.update(deltaTime, _gameStateManager);
-        // APAGUE A LINHA ABAIXO
-        // _gameStateManager.processPending(_sceneManager, _player);
+        // A chamada de processamento de pendências foi removida
         Vector3f currentColor = _gameStateManager.getCurrentFlashlightColor();
         _lightManager.setFlashlightColor(currentColor);
     }
     glutPostRedisplay();
 }
 
+/**
+ * @brief Renderiza a cena do jogo.
+ *
+ * O processo de renderização inclui:
+ * 1. Desenhar a cena 3D (jogadores, objetos, etc.).
+ * 2. Opcionalmente, desenhar as hitboxes de debug.
+ * 3. Desenhar a interface 2D, como a mira e as mensagens de status.
+ */
 void Game::render() {
     // 1. Limpa a tela e desenha a cena 3D principal
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -221,6 +274,13 @@ void Game::render() {
     glutSwapBuffers();
 }
 
+/**
+ * @brief Processa a interação do jogador com o ambiente.
+ *
+ * Lança um raio a partir do centro da tela para detectar o objeto interativo mais
+ * próximo dentro de um raio de alcance. Se um objeto for encontrado, seu método
+ * `onClick` é chamado.
+ */
 void Game::processInteraction() {
     Ray ray = calculateMouseRay(Config::SCREEN_WIDTH / 2, Config::SCREEN_HEIGHT / 2, _player);
     InteractableObject* closestObject = nullptr;
@@ -231,7 +291,6 @@ void Game::processInteraction() {
         if (obj->isInteractable()) {
             float hitDistance = rayIntersectsSphere(ray, obj->getPosition(), obj->getCollisionRadius());
 
-            // --- LÓGICA CORRIGIDA ---
             // MUDANÇA: Verificamos se a distância é diferente de -1 (o valor de "sem colisão"),
             // em vez de > 0. Isso permite interações quando estamos dentro da esfera de colisão.
             if (hitDistance != -1.0f && hitDistance < closestHitDistance) {
@@ -241,8 +300,6 @@ void Game::processInteraction() {
         }
     }
 
-    // A lógica de verificação de distância máxima continua a funcionar, pois uma
-    // distância negativa será sempre menor que PLAYER_INTERACTION_DISTANCE.
     if (closestObject && closestHitDistance <= Config::PLAYER_INTERACTION_DISTANCE) {
         closestObject->onClick(_gameStateManager);
 
@@ -251,7 +308,7 @@ void Game::processInteraction() {
             if (door->canBeOpenedBy(_gameStateManager)) {
                 int targetRoom = door->getTargetRoomIndex();
 
-                // --- LÓGICA DE TELEPORTE CENTRALIZADA ---
+                // LÓGICA DE TELEPORTE CENTRALIZADA
                 // Pegamos a posição de spawn da porta...
                 Vector3f spawnPos = door->getSpawnPosition();
                 // ...e a passamos para a função que troca de sala.
@@ -264,6 +321,16 @@ void Game::processInteraction() {
     }
 }
 
+/**
+ * @brief Processa o evento de uma tecla ser pressionada.
+ *
+ * Se o teclado numérico estiver ativo, lida com a entrada de números.
+ * Caso contrário, processa comandos como `Esc` para sair ou `E` para interagir.
+ *
+ * @param key A tecla pressionada.
+ * @param x A coordenada X do mouse.
+ * @param y A coordenada Y do mouse.
+ */
 void Game::processKeyDown(unsigned char key, int x, int y) {
     if (_gameStateManager.isKeypadActive()) {
         if (key >= '0' && key <= '9') {
@@ -290,11 +357,26 @@ void Game::processKeyDown(unsigned char key, int x, int y) {
     _player.handleKeyDown(key);
 }
 
+/**
+ * @brief Processa o evento de uma tecla ser liberada.
+ * @param key A tecla liberada.
+ * @param x A coordenada X do mouse.
+ * @param y A coordenada Y do mouse.
+ */
 void Game::processKeyUp(unsigned char key, int x, int y) {
     key = tolower(key);
     _player.handleKeyUp(key);
 }
 
+/**
+ * @brief Processa o movimento do mouse para rotacionar a câmera.
+ *
+ * O mouse é reposicionado no centro da tela após cada movimento para
+ * permitir rotação contínua e ilimitada.
+ *
+ * @param x A coordenada X do mouse.
+ * @param y A coordenada Y do mouse.
+ */
 void Game::processMouseMotion(int x, int y) {
     if (x == Config::SCREEN_WIDTH / 2 && y == Config::SCREEN_HEIGHT / 2) {
         return;
