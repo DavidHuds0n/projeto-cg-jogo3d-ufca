@@ -207,7 +207,7 @@ void Game::processInteraction() {
                 const std::vector<ItemType>& requiredItem = door->getRequiredItems();
 
                 // Se não precisa de chave → abre normalmente
-                if (requiredItem.empty()) {
+                if (requiredItem.empty()|| (requiredItem.size() == 1 && requiredItem[0] == ItemType::NENHUM)) {
                     std::cout << "Porta livre! Entrando na próxima sala..." << std::endl;
                     int targetRoom = door->getTargetRoomIndex();
                     _sceneManager.switchToRoom(targetRoom, _player);
