@@ -1,4 +1,3 @@
-// Substitua todo o conteúdo de Door.h
 #ifndef DOOR_H
 #define DOOR_H
 

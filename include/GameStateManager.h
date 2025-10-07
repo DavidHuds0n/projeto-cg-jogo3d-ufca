@@ -1,4 +1,3 @@
-// Substitua todo o conteúdo de GameStateManager.h
 #ifndef GAMESTATEMANAGER_H
 #define GAMESTATEMANAGER_H
 

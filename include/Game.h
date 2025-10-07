@@ -3,8 +3,8 @@
 
 #include "Player.h"
 #include "LightManager.h"
-#include "SceneManager.h" // Adicionado
-#include "GameStateManager.h" // <-- ADICIONE AQUI
+#include "SceneManager.h"
+#include "GameStateManager.h"
 
 /**
  * @file Game.h
