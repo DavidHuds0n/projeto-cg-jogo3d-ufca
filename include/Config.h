@@ -68,7 +68,7 @@ namespace Config {
 
     // --- Configurações de Debug ---
     /** @brief Se true, desenha uma esfera semi-transparente em volta dos objetos interagíveis. */
-    static const bool DEBUG_DRAW_HITBOXES = true;
+    static const bool DEBUG_DRAW_HITBOXES = false;
 }
 
 #endif // CONFIG_H

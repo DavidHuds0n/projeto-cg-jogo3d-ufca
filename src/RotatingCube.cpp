@@ -1,29 +1,53 @@
+/**
+ * @file RotatingCube.cpp
+ * @brief Implementação da classe RotatingCube, um objeto interativo que pode ser rotacionado.
+ */
+
 #include "../include/RotatingCube.h"
 #include "../include/CubePuzzle.h"
 #include <GL/freeglut.h>
 #include <cmath>
 
-
+/**
+ * @brief Construtor da classe RotatingCube.
+ *
+ * Inicializa um cubo com uma posição, tamanho, coordenadas de linha/coluna e
+ * uma referência ao gerenciador do quebra-cabeça. O estado de rotação inicial
+ * é definido de forma aleatória.
+ *
+ * @param position A posição do cubo no espaço 3D.
+ * @param size O tamanho do cubo.
+ * @param row A linha do cubo na grade do quebra-cabeça.
+ * @param col A coluna do cubo na grade do quebra-cabeça.
+ * @param puzzleManager Um ponteiro para o gerenciador do quebra-cabeça.
+ */
 RotatingCube::RotatingCube(const Vector3f& position, float size, int row, int col, CubePuzzle* puzzleManager)
     : InteractableObject(position), _size(size), _row(row), _col(col), _puzzleManager(puzzleManager) {
 
-    // Linhas antigas comentadas para a alteração temporária
-    // _rotationState = rand() % 4;
-    // if (row == 0 && col == 0) {
-    //     _rotationState = 0;
-    // }
+    // Lógica de aleatoriedade para o estado de rotação inicial.
+    _rotationState = rand() % 4;
 
-    // --- NOVA LINHA TEMPORÁRIA ---
-    // Força TODOS os cubos a começarem no estado 0 (a solução do puzzle)
-    _rotationState = 0;
+    // Se a posição for (0,0), o cubo começa no estado de rotação correto (0),
+    // servindo como uma dica.
+    if (row == 0 && col == 0) {
+        _rotationState = 0;
+    }
 
-    // O resto do código continua igual, atualizando os ângulos com base no _rotationState
     _currentAngle = _rotationState * 90.0f;
     _targetAngle = _currentAngle;
     _currentPosition = position;
     _targetPosition = position;
 }
 
+/**
+ * @brief Atualiza o estado do cubo a cada quadro.
+ *
+ * Anima a rotação e o movimento do cubo de forma suave. A rotação
+ * utiliza interpolação linear para se mover em direção ao ângulo alvo.
+ *
+ * @param deltaTime O tempo decorrido desde o último quadro.
+ * @param gameStateManager O gerenciador de estado do jogo (não utilizado diretamente aqui).
+ */
 void RotatingCube::update(float deltaTime, GameStateManager&) {
     // Animação suave de rotação
     if (std::abs(_currentAngle - _targetAngle) > 0.1f) {
@@ -33,30 +57,35 @@ void RotatingCube::update(float deltaTime, GameStateManager&) {
         _currentAngle = _targetAngle;
     }
     // Animação suave de movimento (LERP)
-    float speed = 0.1f; // quanto maior, mais rápido
+    float speed = 0.1f;
     _currentPosition.x += (_targetPosition.x - _currentPosition.x) * std::min(1.0f, deltaTime * speed);
     _currentPosition.y += (_targetPosition.y - _currentPosition.y) * std::min(1.0f, deltaTime * speed);
     _currentPosition.z += (_targetPosition.z - _currentPosition.z) * std::min(1.0f, deltaTime * speed);
 }
 
+/**
+ * @brief Renderiza o cubo na tela.
+ *
+ * O método define as cores de cada face (uma face especial e as outras normais),
+ * aplica as transformações de translação e rotação e desenha o cubo com `GL_QUADS`.
+ */
 void RotatingCube::render() {
     glPushMatrix();
     glTranslatef(_currentPosition.x, _currentPosition.y, _currentPosition.z);
     glRotatef(_currentAngle, 0, 1, 0);
     glScalef(_size, _size, _size);
 
-    // --- LÓGICA DE COR CORRIGIDA ---
-    // Cores definidas para as faces
+    // Define as cores para as faces
     Vector3f corEspecial;
     Vector3f corNormal;
 
-    // Define as cores com base se é o cubo especial (vermelho) ou normal (amarelo)
-    if (_row == 0 && _col == 0) {
+    // Define as cores com base se é o cubo especial ou normal
+    if (_row == 0 && _col == 0) { // Cubo Especial (Vermelho)
         corEspecial = {1.0f, 0.0f, 0.0f}; // Vermelho
         corNormal = {0.4f, 0.4f, 0.4f};   // Cinza
-    } else {
+    } else { // Cubo Normal (Amarelo)
         corEspecial = {1.0f, 1.0f, 0.0f}; // Amarelo
-        corNormal = {1.0f, 1.0f, 1.0f};   // Branco
+        corNormal = {0.4f, 0.4f, 0.4f};   // Cinza
     }
 
     glBegin(GL_QUADS);
@@ -87,6 +116,14 @@ void RotatingCube::render() {
     glPopMatrix();
 }
 
+/**
+ * @brief Lida com o evento de clique no cubo.
+ *
+ * Este método delega a chamada para o gerenciador do quebra-cabeça (`CubePuzzle`)
+ * para que a lógica do jogo seja processada.
+ *
+ * @param gameStateManager O gerenciador de estado do jogo (não utilizado diretamente aqui).
+ */
 void RotatingCube::onClick(GameStateManager&) {
     // Apenas avisa o gerente
     if (_puzzleManager) {
@@ -94,12 +131,21 @@ void RotatingCube::onClick(GameStateManager&) {
     }
 }
 
+/**
+ * @brief Inicia a rotação do cubo.
+ *
+ * Altera o estado de rotação do cubo e define um novo ângulo alvo para a animação.
+ */
 void RotatingCube::rotate() {
     _rotationState = (_rotationState + 1) % 4;
     _targetAngle = _rotationState * 90.0f;
     // Apenas animação suave de rotação, sem alterar posição
 }
 
+/**
+ * @brief Obtém a caixa delimitadora (Bounding Box) do cubo.
+ * @return Um objeto BoundingBox que representa a área de colisão do cubo.
+ */
 BoundingBox RotatingCube::getBoundingBox() const {
     float half = _size / 2.0f;
     BoundingBox box;
@@ -108,6 +154,10 @@ BoundingBox RotatingCube::getBoundingBox() const {
     return box;
 }
 
+/**
+ * @brief Obtém o raio de colisão do cubo.
+ * @return O raio de colisão, que é a metade do tamanho do cubo.
+ */
 float RotatingCube::getCollisionRadius() const {
     return _size / 2.0f;
 }

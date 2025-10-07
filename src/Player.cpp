@@ -1,3 +1,8 @@
+/**
+ * @file Player.cpp
+ * @brief Implementação da classe Player, que representa o jogador e sua interação com o ambiente.
+ */
+
 #include "../include/Player.h"
 #include <cmath>
 #include "../include/Config.h"
@@ -5,13 +10,24 @@
 #include "../include/GameObject.h"
 #include "../include/Wall.h"
 
+/**
+ * @brief Verifica a colisão entre duas caixas delimitadoras (Bounding Boxes).
+ * @param a A primeira BoundingBox.
+ * @param b A segunda BoundingBox.
+ * @return Retorna 'true' se as caixas se sobrepõem, 'false' caso contrário.
+ */
 bool checkCollision(const BoundingBox& a, const BoundingBox& b) {
     return (a.min.x < b.max.x && a.max.x > b.min.x) &&
            (a.min.y < b.max.y && a.max.y > b.min.y) &&
            (a.min.z < b.max.z && a.max.z > b.min.z);
 }
 
-// Construtor Revertido
+/**
+ * @brief Construtor padrão da classe Player.
+ *
+ * Inicializa a posição do jogador, sua velocidade de movimento, raio de colisão e
+ * o estado de suas teclas de movimento. A câmera é sincronizada com a posição inicial.
+ */
 Player::Player() {
     // Voltamos a definir a altura da visão diretamente em _position.y
     _position = {0.0f, 1.6f, 3.0f};
@@ -29,18 +45,41 @@ Player::Player() {
     _camera.setPosition(_position);
 }
 
-// Métodos de Input (sem alterações)
+// Métodos de Input
+/**
+ * @brief Lida com o evento de uma tecla ser pressionada.
+ * @param key O caractere da tecla pressionada.
+ */
 void Player::handleKeyDown(unsigned char key) { _keyState[key] = true; }
+/**
+ * @brief Lida com o evento de uma tecla ser liberada.
+ * @param key O caractere da tecla liberada.
+ */
 void Player::handleKeyUp(unsigned char key) { _keyState[key] = false; }
+/**
+ * @brief Lida com o movimento do mouse para controlar a câmera.
+ * @param x A coordenada x do mouse.
+ * @param y A coordenada y do mouse.
+ */
 void Player::handleMouseMotion(int x, int y) { _camera.processMouseMotion(x, y); }
 
-// setPosition Revertido
+/**
+ * @brief Define a posição do jogador e sincroniza a câmera.
+ * @param pos A nova posição do jogador.
+ */
 void Player::setPosition(const Vector3f& pos) {
     _position = pos;
     _camera.setPosition(_position);
 }
 
-// getBoundingBox Revertido para uma lógica mais simples
+/**
+ * @brief Obtém a Bounding Box (caixa delimitadora) do jogador.
+ *
+ * A caixa de colisão é uma caixa que representa a área do jogador, usada para
+ * detecção de colisão.
+ *
+ * @return Um objeto BoundingBox que representa a área de colisão do jogador.
+ */
 BoundingBox Player::getBoundingBox() const {
     BoundingBox box;
     // Caixa de colisão centrada na altura do jogador
@@ -49,12 +88,26 @@ BoundingBox Player::getBoundingBox() const {
     return box;
 }
 
-// Getter para a câmera (sem alterações)
+/**
+ * @brief Obtém a instância da câmera do jogador.
+ * @return Uma referência para o objeto FPSCamera.
+ */
 FPSCamera& Player::getCamera() {
     return _camera;
 }
 
-// MÉTODO UPDATE Revertido
+/**
+ * @brief Atualiza a posição do jogador e lida com as colisões.
+ *
+ * O método calcula a direção do movimento com base nas teclas pressionadas.
+ * Em seguida, ele move o jogador e, para cada objeto na cena, verifica se houve
+ * uma colisão. Se uma colisão com uma parede for detectada, o movimento
+ * correspondente é revertido.
+ *
+ * @param deltaTime O tempo decorrido desde o último quadro.
+ * @param objects Uma lista de objetos do jogo para verificar a colisão.
+ * @param gameStateManager O gerenciador de estado do jogo (não usado nesta implementação).
+ */
 void Player::update(float deltaTime, const std::vector<GameObject*>& objects, GameStateManager& gameStateManager) {
     float dtSeconds = deltaTime / 1000.0f;
     float velocity = _movementSpeed * dtSeconds;

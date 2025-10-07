@@ -1,6 +1,10 @@
-#include "../include/SceneManager.h"
+/**
+ * @file SceneManager.cpp
+ * @brief Implementação da classe SceneManager, responsável por gerenciar as diferentes salas do jogo.
+ */
 
 // Includes para todos os objetos
+#include "../include/SceneManager.h"
 #include "../include/Floor.h"
 #include "../include/Wall.h"
 #include "../include/PrimitiveObject.h"
@@ -16,10 +20,20 @@
 #include <cstddef>
 #include <iostream>
 
+/**
+ * @brief Construtor da classe SceneManager.
+ *
+ * Inicializa o índice da sala atual para um valor inválido (-1).
+ */
 SceneManager::SceneManager() {
     _currentRoomIndex = -1;
 }
 
+/**
+ * @brief Destrutor da classe SceneManager.
+ *
+ * Itera sobre o vetor de salas e deleta cada instância de `Room`, liberando a memória alocada.
+ */
 SceneManager::~SceneManager() {
     for (Room* room : _rooms) {
         delete room;
@@ -27,6 +41,14 @@ SceneManager::~SceneManager() {
     _rooms.clear();
 }
 
+/**
+ * @brief Inicializa as salas do jogo e a posição inicial do jogador.
+ *
+ * Este método cria todas as salas do jogo, adiciona objetos a cada uma
+ * e define a sala de início e a posição inicial do jogador.
+ *
+ * @param player A instância do jogador.
+ */
 void SceneManager::init(Player& player) {
     _player = &player;
     const int penaltyRoomIndex = 5; // Índice da sala de "Game Over"
@@ -103,7 +125,7 @@ void SceneManager::init(Player& player) {
         room3->addObject(new PrimitiveObject(PrimitiveShape::CUBE, { radius, 0.25f, 0.0f }, {0.3f, 0.3f, 0.3f}, {1.0f, 0.5f, 1.0f}));
 
         // Chaves posicionadas em cima das plataformas
-        room3->addObject(new Key({ 0.0f, 1.5f, radius }, ItemType::CHAVE_SALA_4, "", false, {0.0f, 1.0f, 0.5f}));   // Chave Verde
+        room3->addObject(new Key({ 0.0f, 1.5f, radius }, ItemType::CHAVE_SALA_4, "", false, {0.0f, 1.0f, 0.5f}));  // Chave Verde
         room3->addObject(new Key({ -radius, 2.25f, 0.0f }, ItemType::CHAVE_SALA_3, "", false, {0.0f, 0.0f, 1.0f})); // Chave Azul
         room3->addObject(new Key({ radius, 1.25f, 0.0f }, ItemType::CHAVE_SALA_2, "", false, {1.0f, 0.0f, 0.0f}));   // Chave Vermelha
 
@@ -178,12 +200,26 @@ void SceneManager::init(Player& player) {
     }
 }
 
+/**
+ * @brief Define a sala ativa pelo seu índice.
+ * @param index O índice da sala para se tornar ativa.
+ */
 void SceneManager::setActiveRoom(int index) {
     if(index >= 0 && index < (int)_rooms.size()) {
         _currentRoomIndex = index;
     }
 }
 
+/**
+ * @brief Muda a sala atual e teletransporta o jogador para uma nova posição.
+ *
+ * Atualiza o índice da sala atual e ajusta a posição do jogador para a
+ * posição de spawn especificada.
+ *
+ * @param roomIndex O índice da nova sala.
+ * @param player A instância do jogador.
+ * @param spawnPosition A nova posição do jogador.
+ */
 void SceneManager::switchToRoom(int roomIndex, Player& player, const Vector3f& spawnPosition) {
     if (roomIndex >= 0 && (unsigned int)roomIndex < _rooms.size()) {
         _currentRoomIndex = roomIndex;
@@ -192,22 +228,43 @@ void SceneManager::switchToRoom(int roomIndex, Player& player, const Vector3f& s
     }
 }
 
+/**
+ * @brief Atualiza a sala ativa.
+ *
+ * Chama o método `update` da sala atual, delegando a atualização de seus objetos.
+ *
+ * @param deltaTime O tempo decorrido desde o último quadro.
+ * @param gameStateManager O gerenciador de estado do jogo.
+ */
 void SceneManager::update(float deltaTime, GameStateManager& gameStateManager) {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->update(deltaTime, gameStateManager);
     }
 }
 
+/**
+ * @brief Renderiza a sala ativa.
+ *
+ * Chama o método `render` da sala atual, delegando o desenho de seus objetos.
+ */
 void SceneManager::render() {
     if (_currentRoomIndex != -1) {
         _rooms[_currentRoomIndex]->render();
     }
 }
 
+/**
+ * @brief Obtém os objetos interativos da sala ativa.
+ * @return Uma referência para o vetor de objetos interativos da sala.
+ */
 std::vector<InteractableObject*>& SceneManager::getInteractableObjects() {
     return _rooms[_currentRoomIndex]->getInteractableObjects();
 }
 
+/**
+ * @brief Obtém todos os objetos da sala ativa.
+ * @return Uma referência constante para o vetor de objetos da sala.
+ */
 const std::vector<GameObject*>& SceneManager::getCurrentRoomObjects() const {
     return _rooms[_currentRoomIndex]->getObjects();
 }

@@ -1,13 +1,25 @@
+/**
+ * @file PuzzleDoor.cpp
+ * @brief Implementação da classe PuzzleDoor, que representa uma porta com um ícone visual de puzzle.
+ */
+
 #include "../include/PuzzleDoor.h"
 #include <GL/freeglut.h>
 #include <cmath>
 #include <algorithm> // Incluído para compatibilidade
 
 //================================================================================
-// Funções Auxiliares de Desenho (sem alterações)
+// Funções Auxiliares de Desenho
 //================================================================================
 
-// -------- util: estado de blending “neon” ----------
+/**
+ * @struct BlendGuard
+ * @brief Uma classe auxiliar para gerenciar temporariamente o estado de blending do OpenGL.
+ *
+ * O construtor desabilita a iluminação e o teste de profundidade, habilita o blending
+ * com uma função aditiva ("neon") e armazena os estados originais. O destrutor restaura
+ * os estados de volta para o que eram antes.
+ */
 struct BlendGuard {
     GLboolean lighting, depth, blend;
     GLint src, dst;
@@ -24,13 +36,20 @@ struct BlendGuard {
     }
     ~BlendGuard() {
         glBlendFunc(src, dst);
-        if (!blend)   glDisable(GL_BLEND);
-        if (depth)    glEnable(GL_DEPTH_TEST);
+        if (!blend)  glDisable(GL_BLEND);
+        if (depth)   glEnable(GL_DEPTH_TEST);
         if (lighting) glEnable(GL_LIGHTING);
     }
 };
 
-// -------- porta “estilo foto” ----------
+/**
+ * @brief Desenha o corpo principal da porta.
+ *
+ * A porta é modelada usando cubos sólidos para a moldura, a folha e os painéis.
+ * Também é adicionada uma maçaneta.
+ *
+ * @param color A cor base da porta.
+ */
 static void drawDoorBody(const Vector3f& color) {
     const float W = 1.1f;
     const float H = 2.2f;
@@ -73,7 +92,10 @@ static void drawDoorBody(const Vector3f& color) {
     glPopMatrix();
 }
 
-// -------- desenhos dos ícones no plano da porta ----------
+/**
+ * @brief Desenha o ícone de onda.
+ * @param scale O fator de escala para o ícone.
+ */
 static void drawIconWave(float scale) {
     const float A = 0.30f, B = 0.22f;
     const int   N = 64;
@@ -93,6 +115,10 @@ static void drawIconWave(float scale) {
     glEnd();
 }
 
+/**
+ * @brief Desenha o ícone de sol.
+ * @param scale O fator de escala para o ícone.
+ */
 static void drawIconSun(float scale) {
     const int N = 48; const float R = 0.28f;
     glBegin(GL_LINE_LOOP);
@@ -110,6 +136,10 @@ static void drawIconSun(float scale) {
     glEnd();
 }
 
+/**
+ * @brief Desenha o ícone de montanha.
+ * @param scale O fator de escala para o ícone.
+ */
 static void drawIconMountain(float scale) {
     glBegin(GL_LINE_STRIP);
       glVertex3f(scale*-0.45f, scale*-0.25f, 0.0f);
@@ -125,6 +155,16 @@ static void drawIconMountain(float scale) {
     glEnd();
 }
 
+/**
+ * @brief Desenha o ícone em estilo neon na porta.
+ *
+ * Utiliza o `BlendGuard` para criar um efeito de brilho aditivo e desenha o ícone
+ * duas vezes com diferentes opacidades e larguras de linha para simular o brilho.
+ *
+ * @param icon O tipo de ícone a ser desenhado.
+ * @param glow A cor do brilho.
+ * @param zOffset O deslocamento no eixo Z para o ícone.
+ */
 static void drawIconNeon(PuzzleDoor::Icon icon, const Vector3f& glow, float zOffset) {
     BlendGuard guard;
     auto draw = [&](float scale, float alpha, float lineWidth){
@@ -149,13 +189,25 @@ static void drawIconNeon(PuzzleDoor::Icon icon, const Vector3f& glow, float zOff
 // Implementação da Classe PuzzleDoor (Corrigido)
 //================================================================================
 
+/**
+ * @brief Construtor da classe PuzzleDoor.
+ *
+ * Inicializa a porta com uma cor, um ícone e um brilho de ícone específicos,
+ * herdando as propriedades de `Door` e `InteractableObject`.
+ *
+ * @param position A posição da porta no espaço 3D.
+ * @param targetRoomIndex O índice da sala para a qual a porta leva.
+ * @param spawnPosition A posição do jogador ao entrar na sala de destino.
+ * @param doorColor A cor base da porta.
+ * @param icon O tipo de ícone do puzzle associado.
+ * @param iconGlow A cor do brilho do ícone.
+ */
 PuzzleDoor::PuzzleDoor(const Vector3f& position,
                        int targetRoomIndex,
                        const Vector3f& spawnPosition,
                        const Vector3f& doorColor,
                        Icon icon,
                        const Vector3f& iconGlow)
-    // Chama o construtor da classe base 'Door' para inicializar os membros herdados
     : Door(position, targetRoomIndex, spawnPosition),
       _doorColor(doorColor),
       _iconGlow(iconGlow),
@@ -165,6 +217,12 @@ PuzzleDoor::PuzzleDoor(const Vector3f& position,
     // de posição, raio de colisão, etc. O corpo pode ficar vazio.
 }
 
+/**
+ * @brief Renderiza a porta na tela, incluindo o corpo e o ícone.
+ *
+ * O método desabilita a iluminação e armazena os atributos atuais do OpenGL
+ * antes de desenhar o corpo da porta e o ícone, restaurando-os no final.
+ */
 void PuzzleDoor::render() {
     glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT);
     glDisable(GL_LIGHTING);
@@ -180,7 +238,3 @@ void PuzzleDoor::render() {
     glPopMatrix();
     glPopAttrib();
 }
-
-// A função onClick() foi REMOVIDA. A PuzzleDoor agora usa a função onClick
-// da sua classe pai (Door), que está vazia, pois a lógica de transição
-// de sala é gerenciada pela classe Game, como deve ser.
